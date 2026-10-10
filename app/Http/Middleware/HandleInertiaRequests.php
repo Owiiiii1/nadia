@@ -37,10 +37,41 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            
-            'owlAdmin' => fn () => config('owl-admin.branding', [
-                'brand_name' => config('owl-admin.brand_name', config('owl-admin.name', 'Service Admin')),
+            'auth' => [
+                'user' => $request->user(),
+            ],
+            'locale' => function () use ($request): string {
+                $locale = (string) $request->session()->get('locale', config('app.locale', 'en'));
+
+                if (! in_array($locale, ['en', 'ru', 'uk'], true)) {
+                    $locale = 'en';
+                }
+
+                app()->setLocale($locale);
+
+                return $locale;
+            },
+            'newLeadsCount' => function () use ($request): ?int {
+                if ($request->user() === null) {
+                    return null;
+                }
+
+                try {
+                    if (! \Illuminate\Support\Facades\Schema::hasTable('leads')) {
+                        return 0;
+                    }
+
+                    return \App\Models\Lead::query()
+                        ->where('status', \App\Enums\LeadStatus::New->value)
+                        ->count();
+                } catch (\Throwable) {
+                    return 0;
+                }
+            },
+            'owlAdmin' => fn () => array_merge(config('owl-admin.branding', [
+                'brand_name' => config('owl-admin.brand_name', config('owl-admin.name', 'Nadia Glavin')),
                 'logo_path' => config('owl-admin.logo_path', '/images/company-logo.svg'),
+            ]), [
                 'ai' => (function (): array {
                     $fallback = [
                         'connected' => false,

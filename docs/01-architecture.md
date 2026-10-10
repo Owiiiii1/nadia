@@ -27,7 +27,7 @@ flowchart LR
   landing --> settings
 ```
 
-Лендинг не входит в Vite-сборку кита и не использует Inertia. Админка не подключает маячок, пиксели и сниппеты.
+Лендинг — Blade и vanilla JS, отдельные входные точки Vite `resources/css/landing.css` и `resources/js/landing.js`. В этот бандл не входят React и Inertia. Админка — React/JSX через Inertia. Пиксели и маячок только на лендинге, через пустые `@stack` (`head_codes`, `body_start_codes`, `body_end_codes`); шаг 7 их заполнит.
 
 ## Публичные роуты
 
@@ -47,8 +47,8 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 
 Фронт — `resources/js`, страницы `resources/js/Pages/**/*.jsx`, каркас `AdminLayout.jsx`. Меню слева, подписи en/ru/uk:
 
-1. Dashboard — `dashboard`, `GET /dashboard`. Четыре KPI (заявки, визиты, конверсия, чаты) пока «—». Цифры и события `form_submit`, `chat_open`, `chat_lead` — шаг 6.
-2. Leads — `leads.index`, `GET /leads`. Заглушка шага 4.
+1. Dashboard — `dashboard`, `GET /dashboard`. KPI Leads — заявки за последние 30 дней без spam. Визиты, конверсия и чаты пока «—». События `form_submit`, `chat_open`, `chat_lead` — шаг 6.
+2. Leads — `leads.index` `GET /leads`, `leads.show` `GET /leads/{lead}`, `leads.update` `PATCH /leads/{lead}`, `leads.destroy` `DELETE /leads/{lead}`, `leads.export` `GET /leads/export.csv`. В меню бейдж `status=new`. Публичная запись — `leads.store` `POST /leads` (throttle `leads`, 5/мин по IP), вне auth.
 3. Chats — `chats.index`, `GET /chats`. Заглушка шага 5.
 4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics` (шаг 6); Logs — `statistics.logs`, `GET /statistics/logs`.
 5. Pixels & codes — `tracking.index`, `GET /tracking-codes`. Заглушка шага 7.

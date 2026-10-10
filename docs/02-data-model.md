@@ -13,25 +13,25 @@
 | Колонка | Тип | NULL | Примечание |
 | --- | --- | --- | --- |
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
-| name | VARCHAR(255) | нет | |
-| email | VARCHAR(255) | да | На форме обязателен. В чате достаточно email или phone |
-| phone | VARCHAR(50) | да | |
-| goal | VARCHAR(32) | да | `sell`, `buy`, `invest`, `consult`. На форме обязателен |
-| message | TEXT | да | |
-| source | VARCHAR(16) | нет | `form` или `chat` |
-| status | VARCHAR(16) | нет | По умолчанию `new`. Ещё `in_progress`, `done`, `spam` |
+| name | VARCHAR(255) | нет | На форме max 120 |
+| email | VARCHAR(255) | да | На форме обязателен, max 190. В чате достаточно email или phone |
+| phone | VARCHAR(50) | да | На форме max 40 |
+| goal | VARCHAR(20) | да | `sell`, `buy`, `invest`, `consult`. На форме обязателен |
+| message | TEXT | да | На форме max 2000 |
+| source | VARCHAR(10) | нет | `form` или `chat`. По умолчанию `form` |
+| status | VARCHAR(20) | нет | По умолчанию `new`. Ещё `in_progress`, `done`, `spam` |
 | admin_note | TEXT | да | |
-| utm_source | VARCHAR(255) | да | |
-| utm_medium | VARCHAR(255) | да | |
-| utm_campaign | VARCHAR(255) | да | |
-| utm_term | VARCHAR(255) | да | |
-| utm_content | VARCHAR(255) | да | |
-| referrer | VARCHAR(2048) | да | |
-| landing_path | VARCHAR(2048) | да | |
+| utm_source | VARCHAR(190) | да | |
+| utm_medium | VARCHAR(190) | да | |
+| utm_campaign | VARCHAR(190) | да | |
+| utm_term | VARCHAR(190) | да | |
+| utm_content | VARCHAR(190) | да | |
+| referrer | VARCHAR(500) | да | |
+| landing_path | VARCHAR(500) | да | |
 | visitor_id | CHAR(36) | да | |
-| chat_session_id | BIGINT UNSIGNED | да | FK → `chat_sessions.id`. Пусто у формы |
+| chat_session_id | BIGINT UNSIGNED | да | FK → `chat_sessions.id` на шаге 5. Пусто у формы |
 | ip_hash | CHAR(64) | да | |
-| user_agent | VARCHAR(512) | да | |
+| user_agent | VARCHAR(500) | да | |
 | created_at | TIMESTAMP | нет | |
 | updated_at | TIMESTAMP | нет | |
 
@@ -183,4 +183,4 @@ Email не уникален: повторные заявки сохраняют�
 
 ## ip_hash
 
-`ip_hash = sha256(ip + daily_salt)` в hex. Соль одна на календарные сутки UTC, хранится вне таблиц аналитики (файл в `storage`, не в git, либо cache). В `page_views`, `leads` и чат сырой IP не пишется.
+`ip_hash = sha256(ip + '|' + дата UTC Y-m-d + '|' + app.key)` в hex. Считает `App\Support\IpHasher`. Сырой IP в `leads` не пишется. Тот же хелпер — для аналитики и чата, когда эти таблицы появятся.

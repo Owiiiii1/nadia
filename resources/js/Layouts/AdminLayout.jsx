@@ -31,7 +31,7 @@ import {
 
 const primaryNavItems = [
     { route: 'dashboard', icon: Home },
-    { route: 'leads.index', icon: Inbox },
+    { route: 'leads.index', icon: Inbox, activePattern: 'leads.*' },
     { route: 'chats.index', icon: MessagesSquare },
 ];
 
@@ -50,7 +50,7 @@ function navLabel(routeName, t) {
 }
 
 export default function AdminLayout({ title, children }) {
-    const { auth, locale = 'en', owlAdmin = {} } = usePage().props;
+    const { auth, locale = 'en', owlAdmin = {}, newLeadsCount = null } = usePage().props;
     const user = auth?.user;
     const brandName = owlAdmin?.brand_name ?? 'Service Admin';
     const logoPath = owlAdmin?.logo_path ?? '/images/company-logo.svg';
@@ -171,6 +171,11 @@ export default function AdminLayout({ title, children }) {
                 >
                     <Icon className="h-4 w-4" />
                     <span>{navLabel(routeName, t)}</span>
+                    {routeName === 'leads.index' && newLeadsCount !== null && (
+                        <span className="ml-auto inline-flex min-w-5 items-center justify-center rounded-full bg-amber-400 px-1.5 text-xs font-semibold text-slate-900">
+                            {newLeadsCount}
+                        </span>
+                    )}
                 </Link>
             );
         });

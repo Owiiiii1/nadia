@@ -1,6 +1,10 @@
 <?php
 
+use App\Enums\LeadStatus;
+use App\Http\Controllers\LeadController;
 use App\Http\Controllers\ProfileController;
+use App\Models\Lead;
+use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\TelegramWebhookController;
 use App\Http\Controllers\Settings\AiSettingsController;
 use App\Http\Controllers\Settings\SettingsController;
@@ -25,12 +29,25 @@ Route::post('/telegram/webhook', TelegramWebhookController::class)
 
 Route::middleware(AdminRouteMiddleware::stack())->group(function () {
     Route::get('/dashboard', function () {
-        return Inertia::render('Dashboard');
+        $leadsCount = 0;
+
+        if (Schema::hasTable('leads')) {
+            $leadsCount = Lead::query()
+                ->where('status', '!=', LeadStatus::Spam->value)
+                ->where('created_at', '>=', now()->subDays(30))
+                ->count();
+        }
+
+        return Inertia::render('Dashboard', [
+            'leadsCount' => $leadsCount,
+        ]);
     })->name('dashboard');
 
-    Route::get('/leads', function () {
-        return Inertia::render('Leads/Index');
-    })->name('leads.index');
+    Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
+    Route::get('/leads/export.csv', [LeadController::class, 'export'])->name('leads.export');
+    Route::get('/leads/{lead}', [LeadController::class, 'show'])->name('leads.show');
+    Route::patch('/leads/{lead}', [LeadController::class, 'update'])->name('leads.update');
+    Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
 
     Route::get('/chats', function () {
         return Inertia::render('Chats/Index');

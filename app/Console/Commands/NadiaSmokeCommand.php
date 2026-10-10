@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use Illuminate\Contracts\Http\Kernel;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
@@ -20,7 +22,13 @@ class NadiaSmokeCommand extends Command
             'login',
             'logout',
             'dashboard',
+            'landing',
+            'leads.store',
             'leads.index',
+            'leads.show',
+            'leads.update',
+            'leads.destroy',
+            'leads.export',
             'chats.index',
             'analytics.index',
             'tracking.index',
@@ -51,9 +59,12 @@ class NadiaSmokeCommand extends Command
             $ok = $this->mark(! Schema::hasTable($table), "table {$table} absent") && $ok;
         }
 
-        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings'] as $table) {
+        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads'] as $table) {
             $ok = $this->mark(Schema::hasTable($table), "table {$table} present") && $ok;
         }
+
+        $landing = collect(Route::getRoutes())->first(fn ($route) => $route->getName() === 'landing');
+        $ok = $this->mark($landing !== null && $landing->uri() === '/', 'landing route is /') && $ok;
 
         $manifestPath = public_path('build/manifest.json');
         $manifest = is_file($manifestPath)
@@ -67,9 +78,20 @@ class NadiaSmokeCommand extends Command
             'resources/js/Pages/Analytics/Index.jsx',
             'resources/js/Pages/Tracking/Index.jsx',
             'resources/js/Pages/Settings/AssistantPanel.jsx',
+            'resources/js/landing.js',
+            'resources/css/landing.css',
         ] as $page) {
             $ok = $this->mark(isset($manifest[$page]), "manifest {$page}") && $ok;
         }
+
+        $kernel = app(Kernel::class);
+        $request = Request::create('/', 'GET');
+        $response = $kernel->handle($request);
+        $body = (string) $response->getContent();
+        $landingOk = $response->getStatusCode() === 200
+            && str_contains($body, 'Chicago real estate, handled strategically.');
+        $kernel->terminate($request, $response);
+        $ok = $this->mark($landingOk, 'GET / returns the landing headline') && $ok;
 
         return $ok ? self::SUCCESS : self::FAILURE;
     }
