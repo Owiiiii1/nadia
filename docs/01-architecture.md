@@ -34,11 +34,14 @@ flowchart LR
 | Метод | Путь | Назначение |
 | --- | --- | --- |
 | GET | `/` | Лендинг |
+| GET | `/privacy` | Текст политики. Делается на шаге 7, ссылка в футере лендинга. Баннера согласия нет |
 | POST | `/leads` | Заявка с формы |
 | POST | `/chat/message` | Сообщение ассистенту |
 | POST | `/t` | Маячок аналитики (`sendBeacon`) |
 
 `POST /leads` и `POST /chat/message` проходят CSRF, валидацию и throttle. На форме дополнительно honeypot. `POST /t` тоже с CSRF-токеном в теле запроса: `sendBeacon` умеет отправить `FormData` с `_token`.
+
+Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/message` — 20 запросов в минуту, `/t` — 60 запросов в минуту. Лимит 30 сообщений на сессию чата считается отдельно.
 
 ## Роуты админки
 
@@ -47,7 +50,7 @@ flowchart LR
 Оставить:
 
 - Auth
-- Dashboard, переделанный под KPI: заявки, визиты, конверсия
+- Dashboard, переделанный под KPI: заявки, визиты, конверсия = заявки / уникальные посетители за период. События `form_submit`, `chat_open`, `chat_lead` — отдельные счётчики
 - Settings: General, Users, AI, новая вкладка Assistant
 - Profile
 - Statistics / Logs
@@ -89,10 +92,16 @@ flowchart LR
 - Cookie сессии трекинга живёт 30 минут с последней активности. Имя cookie не должно совпадать с cookie сессии Laravel. В БД поле называется `session_id`.
 - `POST /t` передаёт path, referrer, UTM и признаки устройства. Сервер считает `referrer_host`, `ip_hash` и пишет `page_views`.
 - Сырой IP не пишется и не логируется этим запросом.
-- User-Agent бота не создаёт визит. Колонка `is_bot` в схеме есть; считать ли такие хиты в таблицу — вопрос в [07-open-questions.md](07-open-questions.md).
+- Запрос с User-Agent бота не пишется ни в `page_views`, ни в `site_events`. Колонки `is_bot` нет.
 - События `form_submit`, `chat_open`, `chat_lead` пишутся в `site_events`.
+- Строки `page_views` и `site_events` старше 12 месяцев удаляет scheduled command (шаг 6).
+- Группировка по дням идёт по календарным суткам `America/Chicago`. В таблицах время хранится в UTC.
 
 Админские HTML-ответы маячок не содержат.
+
+## Время
+
+`APP_TIMEZONE=UTC`. Показ дат в админке и границы суток в аналитике берутся из `config('app.display_timezone')`, значение `America/Chicago`.
 
 ## Пиксели
 

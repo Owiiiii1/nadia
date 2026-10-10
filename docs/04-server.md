@@ -1,70 +1,53 @@
 # 04. Сервер
 
-План шага 1. Команды на шаге 0 не выполнялись: пакеты не ставились, конфиги не менялись. Факты ниже сняты 2026-10-10 с этой машины.
+Состояние после шага 1 (2026-10-10). ОС — Ubuntu 26.04.1 LTS, IP 2.29.102.216, часовой пояс `Etc/UTC`, RAM 3.7 GiB. Каталог сайта `/var/www/nadia`, владелец `deploy:www-data`, режим `2775`.
 
-## Факты
+## Сделано
 
-| | |
+| Компонент | Факт |
 | --- | --- |
-| IP | 2.29.102.216 |
-| ОС | Ubuntu 26.04.1 LTS (`resolute`), ядро 7.0.0-38-generic |
-| Hostname | `ubuntu-4gb-hel1-2` |
-| RAM | 3.7 GiB, swap нет |
-| Диск | 38 ГБ, занято около 2.6 ГБ |
-| Часовой пояс | `Etc/UTC`, NTP включён |
-| Каталог сайта | `/var/www/nadia`, `deploy:www-data`, режим `2775` |
-| Пользователь | `deploy` в группах `sudo`, `www-data` |
-| Git | origin `git@github.com:Owiiiii1/nadia.git`, ветка `main` |
-| Домен | `nadia.owlsolutions.net`, A-запись по брифу уже на этот сервер. На шаге 0 nginx нет, порты 80 и 443 не слушаются |
+| SSH | `/etc/ssh/sshd_config.d/00-hardening.conf`: root и пароль выключены, ключ включён. Префикс `00-` перекрывает `50-cloud-init.conf` |
+| Swap | `/swapfile` 2 ГБ, строка в `/etc/fstab`, `vm.swappiness=10` в `/etc/sysctl.d/99-swap.conf` |
+| ufw | Включён. Входящие: OpenSSH, 80/tcp, 443/tcp |
+| fail2ban | Jail `sshd`, `backend = systemd`, сервис включён. Конфиг пакета: `/etc/fail2ban/jail.d/defaults-debian.conf` |
+| nginx | 1.28.3, `server_tokens off`. Default site убран из `sites-enabled`. Своего vhost нет, порты 80 и 443 пока не слушаются |
+| PHP | 8.5.4 FPM и CLI. Сокет `/run/php/php8.5-fpm.sock`, пул `www`, пользователь `www-data`, `pm=dynamic`, `pm.max_children=10` |
+| PHP ini | FPM и CLI: `upload_max_filesize=20M`, `post_max_size=25M`, `expose_php=Off`. FPM: `memory_limit=256M` |
+| MySQL | 8.4.11, слушает только `127.0.0.1` (3306 и mysqlx 33060). `innodb_buffer_pool_size=512M` в `/etc/mysql/mysql.conf.d/zz-nadia.cnf` |
+| База | `nadia`, `utf8mb4` / `utf8mb4_unicode_ci`. Пользователи `nadia`@`localhost` и `nadia`@`127.0.0.1`, права только на `nadia.*` |
+| Пароль БД | `/home/deploy/.nadia-db-credentials`, режим `600`. Не в git и не в отчётах |
+| Composer | 2.10.3 в `/usr/local/bin/composer`, установщик проверен по SHA-384 |
+| Node | 22.22.1 и npm 9.2.0 из архива Ubuntu |
+| certbot | 4.0.0 и `python3-certbot-nginx`. Сертификат не выпускался |
+| supervisor | 4.3.0 установлен, программ нет |
+| unattended-upgrades | Включён. В разрешённых origin есть `${distro_id}:${distro_codename}-security` |
+| Утилиты | unzip, curl, acl |
+| Бэкап БД | `/usr/local/bin/nadia-db-backup.sh`, cron root `30 3 * * *` (03:30 UTC). Каталог `/var/backups/nadia`, режим `700`, 14 последних архивов |
 
-Уже стоит из базовой системы: `ufw` (выключен), `unattended-upgrades` (enabled и active), `git`, OpenSSH.
+Отдельного пакета `php8.5-opcache` в архиве Ubuntu нет. Модуль Zend OPcache входит в PHP 8.5, `opcache.enable=On`.
 
-Ещё не установлено: nginx, PHP, MySQL, Composer, Node, npm, certbot, fail2ban, supervisor.
+Расширения, которые просили: mbstring, xml, curl, mysql, zip, bcmath, intl, gd, readline. OPcache — встроенный.
 
-### Расхождение с ожиданием «уже сделано»
+## Права на шаге 2
 
-Ожидалось: вход только по ключу, root-логин закрыт.
+`deploy` уже пишет в `/var/www/nadia`. Каталогов `storage` и `bootstrap/cache` ещё нет, ACL на шаге 1 не ставились.
 
-Фактический конфиг на момент шага 0:
+Когда Laravel будет на месте, выдать `www-data` запись:
 
-- `/etc/ssh/sshd_config`: `PermitRootLogin yes`
-- `/etc/ssh/sshd_config.d/50-cloud-init.conf`: `PasswordAuthentication yes`
-- `PubkeyAuthentication` включён, `KbdInteractiveAuthentication no`
+```bash
+sudo setfacl -R -m u:www-data:rwX storage bootstrap/cache
+sudo setfacl -R -d -m u:www-data:rwX storage bootstrap/cache
+```
 
-На шаге 1 это нужно довести до брифа, не считая задачу закрытой. Перед `sshd` reload проверить вход по ключу отдельной сессией.
+Cron `schedule:run` от `www-data` добавляется там же, после появления `artisan`:
 
-### PHP 8.3 и репозиторий Ubuntu
+```cron
+* * * * * cd /var/www/nadia && php artisan schedule:run >> /dev/null 2>&1
+```
 
-В архиве Ubuntu 26.04 есть `php8.5` (кандидат FPM `8.5.4`) и нет пакетов `php8.3`. Бриф требует PHP 8.3-FPM. Как ставить 8.3 — открытый вопрос в [07-open-questions.md](07-open-questions.md). Пока вопрос не закрыт, шаг 1 не подменяет 8.3 на 8.5.
+## Что остаётся на шаг 2
 
-Node 22 LTS в архиве есть: кандидат `nodejs` `22.22.1`. MySQL: кандидат `mysql-server` `8.4.11`.
-
-## Что сделать на шаге 1
-
-Работать от `deploy` через sudo. Версии пакетов записать в отчёт шага.
-
-1. **SSH.** `PermitRootLogin no`. `PasswordAuthentication no` в конфиге и в drop-in cloud-init, чтобы drop-in не перебил основной файл. Перезагрузить sshd только после проверки ключа.
-2. **Часовой пояс.** Оставить `Etc/UTC`. Отдельно не переключать на Chicago: это ОС сервера.
-3. **Swap.** RAM меньше 4 ГБ, swap нужен. Файл `/swapfile` на 2 ГБ, запись в `/etc/fstab`, `vm.swappiness=10`.
-4. **ufw.** Разрешить OpenSSH, 80/tcp, 443/tcp. Включить. IPv6 не открывать шире, чем IPv4.
-5. **fail2ban.** Jail `sshd`.
-6. **nginx.** Пакет и сервис. Виртуальный хост сайта — на шаге 2, вместе с Laravel `public` и сертификатом. На шаге 1 достаточно установленного nginx и открытых портов.
-7. **PHP 8.3-FPM** после решения по источнику пакетов. Пакеты: `php8.3-fpm`, `php8.3-cli`, `php8.3-mbstring`, `php8.3-xml`, `php8.3-curl`, `php8.3-mysql`, `php8.3-zip`, `php8.3-bcmath`, `php8.3-intl`, `php8.3-gd`. Пул — сокет, пользователь `www-data`.
-8. **MySQL.** `mysql-server`. База `nadia`, пользователь `nadia`@`127.0.0.1` и `nadia`@`localhost`, права только на эту базу. Пароль генерируется на сервере и пишется в `.env`, не в git и не в отчёт.
-9. **Composer.** Официальный установщик, бинарник в `/usr/local/bin/composer`.
-10. **Node 22 LTS.** Пакеты `nodejs` и `npm` из архива Ubuntu. Проверить `node -v` на 22.x. Отдельный NodeSource не нужен, пока кандидат архива остаётся 22.
-11. **certbot.** Пакеты `certbot` и `python3-certbot-nginx`. Сертификат выпускается на шаге 2, когда nginx уже отдаёт домен.
-12. **unattended-upgrades.** Уже включён. Проверить, что security-обновления включены, и записать это в отчёт. Повторно пакет не ставить без нужды.
-13. **cron.** От `www-data`:
-
-    `* * * * * cd /var/www/nadia && php artisan schedule:run >> /dev/null 2>&1`
-
-    Добавить после появления `artisan` (шаг 2). В плане шага 1 — пользователь и строка, чтобы их не забыть.
-
-14. **supervisor.** Установить пакет. Программу воркера очереди не заводить, пока приложению не понадобится queue. Чат по брифу синхронный.
-
-## Что на шаге 1 не делать
-
-- Не создавать Laravel и не ставить кит.
-- Не выпускать сертификат до рабочего `server_name`.
-- Не коммитить пароли MySQL и ключи API.
+- Виртуальный хост nginx с `root` на `public` и сокетом `/run/php/php8.5-fpm.sock`.
+- Сертификат certbot для `nadia.owlsolutions.net`.
+- Laravel 12 и кит. Если кит v0.5.0 не встанет на PHP 8.5, вопрос версии PHP открывается снова.
+- Пароль БД переносится в `.env` на сервере. Файл кредов не коммитится.

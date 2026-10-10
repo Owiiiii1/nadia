@@ -6,7 +6,7 @@
 
 - CSRF Laravel на `POST /leads`, `POST /chat/message` и `POST /t` (токен в теле, для маячка — внутри payload `sendBeacon`).
 - Honeypot на форме заявки: скрытое поле, которое человек не заполняет. Непустое значение — ответ как у обычной формы, заявка не создаётся.
-- Throttle по IP на эти POST. Числа лимитов в ТЗ не заданы, предложения — в [07-open-questions.md](07-open-questions.md).
+- Throttle по IP: `POST /leads` — 5 в минуту, `POST /chat/message` — 20 в минуту, `POST /t` — 60 в минуту.
 - Валидация полей до записи. Goal только из списка `sell`, `buy`, `invest`, `consult`.
 - Сообщение чата: не больше 1000 символов, не больше 30 сообщений на сессию.
 
@@ -16,7 +16,7 @@
 
 ## IP
 
-Сырой IP не пишется в `leads`, `chat_sessions`, `page_views`, `site_events` и не кладётся в access-лог приложения. В таблицах только `ip_hash = sha256(ip + daily salt)`.
+Сырой IP не пишется в `leads`, `chat_sessions`, `page_views`, `site_events` и не кладётся в access-лог приложения. В таблицах только `ip_hash = sha256(ip + daily salt)`. Запрос бота не создаёт строку аналитики.
 
 Соль меняется раз в сутки по UTC и лежит вне таблиц аналитики: файл в `storage`, который не коммитится, либо cache. Соль не нужна, чтобы читать отчёты.
 
@@ -39,10 +39,10 @@ Meta Pixel, GA4 и сниппеты подключает layout лендинга
 
 ## Бэкапы БД
 
-Ежедневный дамп MySQL базы `nadia` на сервере, каталог вне git (например `/var/backups/nadia`). Срок хранения копий в ТЗ не задан — см. открытые вопросы. На шаге 8 один дамп восстанавливается в пустую базу и сверяется по числу заявок и наличию пользователя админки.
+Ежедневный дамп MySQL базы `nadia`: `/usr/local/bin/nadia-db-backup.sh` (копия без секретов — `deploy/scripts/nadia-db-backup.sh`), cron root в 03:30 UTC. Архивы лежат в `/var/backups/nadia`, хранятся 14 последних. Учётка читается из `/home/deploy/.nadia-db-credentials` (режим 600), этот файл не в git и не в отчётах. На шаге 8 один дамп восстанавливается в пустую базу и сверяется по числу заявок и наличию пользователя админки.
 
-Доступ к дампам — только `deploy` и root, каталог не под `public`.
+Каталог дампов — `root:root`, режим `700`, не под `public`.
 
 ## SSH
 
-Боевой вход — ключ пользователя `deploy`. Root по SSH и вход по паролю должны быть выключены. На шаге 0 конфиг этому ещё не соответствовал, закрытие входит в шаг 1 ([04-server.md](04-server.md)).
+Боевой вход — ключ пользователя `deploy`. С шага 1 в `/etc/ssh/sshd_config.d/00-hardening.conf`: `PermitRootLogin no`, `PasswordAuthentication no`, `KbdInteractiveAuthentication no`, `PubkeyAuthentication yes`. Файл с префиксом `00-` перекрывает `50-cloud-init.conf`, потому что sshd берёт первое значение.

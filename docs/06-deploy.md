@@ -14,7 +14,7 @@ composer install --no-dev --optimize-autoloader
 php artisan migrate --force
 npm ci && npm run build
 php artisan optimize
-sudo systemctl reload php8.3-fpm
+sudo systemctl reload php8.5-fpm
 ```
 
 `git pull` — fast-forward `main`. Если история разошлась, деплой останавливается, force pull не делается.
@@ -23,7 +23,7 @@ sudo systemctl reload php8.3-fpm
 
 `php artisan optimize` собирает кэши конфигурации, маршрутов и представлений. После смены `.env` кэш конфигурации нужно сбросить и собрать снова.
 
-Имя сервиса FPM завязано на PHP 8.3. Если шаг 1 по открытому вопросу останется на другом пакете PHP, в этой команде меняется только имя сервиса.
+Сервис FPM — `php8.5-fpm`, сокет `/run/php/php8.5-fpm.sock`.
 
 ## Права
 

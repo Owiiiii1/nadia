@@ -11,7 +11,7 @@
 - Laravel 12
 - owlsolutions/custom-admin-kit v0.5.0 (Inertia и Vite только для админки)
 - MySQL
-- PHP 8.3-FPM
+- PHP 8.5-FPM из архива Ubuntu 26.04, сокет `/run/php/php8.5-fpm.sock`
 - nginx
 - SSL: certbot, домен `nadia.owlsolutions.net`
 
@@ -21,12 +21,12 @@
 
 1. **Лендинг** на `GET /`. Blade-шаблон, перенесённый из `reference/landing-index.html` один в один по дизайну. Это не Inertia: Blade и vanilla JS.
 
-2. **Форма заявки.** Поля: name, email, phone (необязательно), goal (`sell` / `buy` / `invest` / `consult`), message (необязательно). `POST /leads`. Защита: CSRF, honeypot, throttle, валидация. Вместе с заявкой сохраняются UTM, referrer, landing path, visitor_id.
+2. **Форма заявки.** Поля: name, email, phone (необязательно), goal (`sell` / `buy` / `invest` / `consult`), message (необязательно). `POST /leads`. Защита: CSRF, honeypot, throttle 5 запросов в минуту с IP, валидация. Вместе с заявкой сохраняются UTM, referrer, landing path, visitor_id.
 
-3. **Чат с ИИ.** Плавающая кнопка в правом нижнем углу, vanilla JS. `POST /chat/message`. Провайдер и модель — активная запись таблицы `ai_provider_settings` кита (OpenAI / Anthropic / Gemini). System prompt и приветствие редактируются в админке. Лимиты: сообщение не длиннее 1000 символов, не больше 30 сообщений на сессию, throttle по IP, в контекст уходят последние 20 сообщений, max output tokens около 500. Если посетитель оставил имя и email или телефон, ассистент добавляет скрытый блок `<lead>{json}</lead>`. Бэкенд вырезает блок из ответа и создаёт заявку с `source=chat`. Если ИИ не активен, кнопка чата скрыта.
+3. **Чат с ИИ.** Плавающая кнопка в правом нижнем углу, vanilla JS. `POST /chat/message`. Провайдер и модель — активная запись таблицы `ai_provider_settings` кита (OpenAI / Anthropic / Gemini). System prompt и приветствие редактируются в админке. Лимиты: сообщение не длиннее 1000 символов, не больше 30 сообщений на сессию, throttle 20 запросов в минуту с IP, в контекст уходят последние 20 сообщений, max output tokens около 500. Если посетитель оставил имя и email или телефон, ассистент добавляет скрытый блок `<lead>{json}</lead>`. Бэкенд вырезает блок из ответа и создаёт заявку с `source=chat`. Если ИИ не активен, кнопка чата скрыта.
 
 4. **Админка кита v0.5.0, упрощённая.**
-   - Оставить: Auth, Dashboard (KPI: заявки, визиты, конверсия), Settings (General, Users, AI и новая вкладка Assistant), Profile, Statistics/Logs, `owl-admin/health`. Вкладку Telegram оставить. Вкладку App оставить, если она не завязана на удаляемые модули.
+   - Оставить: Auth, Dashboard (KPI: заявки, визиты, конверсия = заявки / уникальные посетители за период; `form_submit`, `chat_open`, `chat_lead` — отдельные счётчики), Settings (General, Users, AI и новая вкладка Assistant), Profile, Statistics/Logs, `owl-admin/health`. Вкладку Telegram оставить. Вкладку App оставить, если она не завязана на удаляемые модули.
    - Удалить: Customers, Orders, Services, Staff, Calendar — роуты, контроллеры, модели, страницы, пункты меню, миграции и таблицы.
    - Новые разделы:
      - Заявки: таблица, фильтры (статус, источник, период), карточка, статусы `new` / `in_progress` / `done` / `spam`, заметка админа, ссылка на чат при `source=chat`, экспорт CSV.
@@ -34,7 +34,7 @@
      - Аналитика: визиты, уникальные посетители, просмотры, график по дням, топ рефереров, UTM, устройства и браузеры, конверсии (`form_submit`, `chat_open`, `chat_lead`). Период: 7 / 30 / 90 дней или свой.
      - Пиксели и коды: CRUD сниппетов (`name`, `placement`: `head` | `body_start` | `body_end`, `code`, `is_active`, `sort`) и поля Meta Pixel ID и GA4 Measurement ID. Сниппеты и пиксели только на лендинге, никогда в админке. При успешной заявке, если ID заданы: `fbq('track','Lead')` и gtag event `generate_lead`.
 
-5. **Своя аналитика.** JS-маячок на лендинге шлёт `POST /t` через `sendBeacon`. `visitor_id` — first-party cookie на 1 год. `session_id` — 30 минут неактивности. Сырой IP не хранится, только `ip_hash = sha256(ip + daily salt)`. Боты отсекаются по User-Agent. Трекинг только лендинга, админку не трекаем.
+5. **Своя аналитика.** JS-маячок на лендинге шлёт `POST /t` через `sendBeacon` (throttle 60 запросов в минуту с IP). `visitor_id` — first-party cookie на 1 год. `session_id` — 30 минут неактивности. Сырой IP не хранится, только `ip_hash = sha256(ip + daily salt)`. Запросы ботов по User-Agent не пишутся. `page_views` и `site_events` хранятся 12 месяцев, чистка — scheduled command на шаге 6. Трекинг только лендинга, админку не трекаем. Время в БД — UTC (`APP_TIMEZONE=UTC`). Сутки в аналитике и время в админке показываются в `America/Chicago` (`config('app.display_timezone')`). Баннер согласия не делаем. Страница `/privacy` (простой текст) и ссылка в футере — на шаге 7.
 
 ## Вне скоупа
 
@@ -42,4 +42,5 @@
 - Трекинг страниц админки.
 - Хранение сырого IP.
 - Inertia на лендинге.
-- Код приложения, пакеты и конфиги сервера на шаге 0 (этот шаг — документация и структура репозитория).
+- Баннер согласия на cookie.
+- Шаг 0 ограничивался документацией и структурой репозитория.
