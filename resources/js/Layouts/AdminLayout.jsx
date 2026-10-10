@@ -1,19 +1,18 @@
 import { Link, router, usePage } from '@inertiajs/react';
 import {
     ChevronDown,
-    CalendarDays,
     ChartColumn,
-    Contact,
+    Code2,
     FileText,
     Globe,
     Home,
-    LayoutGrid,
+    Inbox,
+    LineChart,
     LogOut,
+    Menu,
+    MessagesSquare,
     Settings,
     UserCircle2,
-    Users,
-    Wrench,
-    Menu,
 } from 'lucide-react';
 import { useState } from 'react';
 import {
@@ -32,11 +31,8 @@ import {
 
 const primaryNavItems = [
     { route: 'dashboard', icon: Home },
-    { route: 'customers.index', icon: Contact, activePattern: 'customers.*' },
-    { route: 'orders.index', icon: LayoutGrid, activePattern: 'orders.*' },
-    { route: 'calendar.index', icon: CalendarDays },
-    { route: 'staff.index', icon: Users },
-    { route: 'services.index', icon: Wrench, activePattern: 'services.*' },
+    { route: 'leads.index', icon: Inbox },
+    { route: 'chats.index', icon: MessagesSquare },
 ];
 
 const languageLabels = {
@@ -46,12 +42,10 @@ const languageLabels = {
 };
 
 function navLabel(routeName, t) {
-    if (routeName === 'dashboard') return t.home;
-    if (routeName === 'customers.index') return t.customers;
-    if (routeName === 'orders.index') return t.orders;
-    if (routeName === 'calendar.index') return t.calendar;
-    if (routeName === 'staff.index') return t.staff;
-    if (routeName === 'services.index') return t.services;
+    if (routeName === 'dashboard') return t.dashboard;
+    if (routeName === 'leads.index') return t.leads;
+    if (routeName === 'chats.index') return t.chats;
+    if (routeName === 'tracking.index') return t.tracking;
     return routeName;
 }
 
@@ -84,21 +78,19 @@ export default function AdminLayout({ title, children }) {
         telegramBadgeText = telegram.status_label;
     }
 
-    const [statisticsOpen, setStatisticsOpen] = useState(route().current('statistics.*'));
+    const statisticsActive = route().current('statistics.*') || route().current('analytics.*');
+    const [statisticsOpen, setStatisticsOpen] = useState(statisticsActive);
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-    const [mobileStatisticsOpen, setMobileStatisticsOpen] = useState(
-        route().current('statistics.*'),
-    );
+    const [mobileStatisticsOpen, setMobileStatisticsOpen] = useState(statisticsActive);
     const [localeSwitching, setLocaleSwitching] = useState(false);
 
     const uiText = {
         en: {
-            home: 'Home',
-            customers: 'Customers',
-            orders: 'Orders',
-            calendar: 'Calendar',
-            staff: 'Staff',
-            services: 'Services',
+            dashboard: 'Dashboard',
+            leads: 'Leads',
+            chats: 'Chats',
+            analytics: 'Analytics',
+            tracking: 'Pixels & codes',
             settings: 'Settings',
             logout: 'Logout',
             statistics: 'Statistics',
@@ -108,12 +100,11 @@ export default function AdminLayout({ title, children }) {
             language: 'Language',
         },
         ru: {
-            home: 'Главная',
-            customers: 'Клиенты',
-            orders: 'Заказы',
-            calendar: 'Календарь',
-            staff: 'Персонал',
-            services: 'Услуги',
+            dashboard: 'Дашборд',
+            leads: 'Заявки',
+            chats: 'Чаты',
+            analytics: 'Аналитика',
+            tracking: 'Пиксели и коды',
             settings: 'Настройки',
             logout: 'Выход',
             statistics: 'Статистика',
@@ -123,12 +114,11 @@ export default function AdminLayout({ title, children }) {
             language: 'Язык',
         },
         uk: {
-            home: 'Головна',
-            customers: 'Клієнти',
-            orders: 'Замовлення',
-            calendar: 'Календар',
-            staff: 'Персонал',
-            services: 'Послуги',
+            dashboard: 'Дашборд',
+            leads: 'Заявки',
+            chats: 'Чати',
+            analytics: 'Аналітика',
+            tracking: 'Пікселі та коди',
             settings: 'Налаштування',
             logout: 'Вийти',
             statistics: 'Статистика',
@@ -144,8 +134,7 @@ export default function AdminLayout({ title, children }) {
 
     const settingsActive =
         route().current('settings.*')
-        || route().current('ai-settings.*')
-        || route().current('app-settings.*');
+        || route().current('ai-settings.*');
 
     const switchLocale = (nextLocale) => {
         if (!nextLocale || nextLocale === locale || localeSwitching) {
@@ -196,7 +185,7 @@ export default function AdminLayout({ title, children }) {
                     type="button"
                     onClick={() => setOpen((prev) => !prev)}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition ${
-                        route().current('statistics.*')
+                        statisticsActive
                             ? 'border-l-2 border-white bg-white/10 text-white'
                             : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
@@ -212,6 +201,18 @@ export default function AdminLayout({ title, children }) {
 
                 {open && (
                     <div className="mt-1 space-y-1 pl-4">
+                        <Link
+                            href={route('analytics.index')}
+                            onClick={() => mobile && setMobileMenuOpen(false)}
+                            className={`flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition ${
+                                route().current('analytics.index')
+                                    ? 'bg-white/10 text-white'
+                                    : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                            }`}
+                        >
+                            <LineChart className="h-4 w-4" />
+                            <span>{t.analytics}</span>
+                        </Link>
                         <Link
                             href={route('statistics.logs')}
                             onClick={() => mobile && setMobileMenuOpen(false)}
@@ -285,6 +286,17 @@ export default function AdminLayout({ title, children }) {
                             <div className="my-3 border-t border-white/10" />
 
                             {renderStatistics(false)}
+                            <Link
+                                href={route('tracking.index')}
+                                className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                                    route().current('tracking.index')
+                                        ? 'border-l-2 border-white bg-white/10 text-white'
+                                        : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                                }`}
+                            >
+                                <Code2 className="h-4 w-4" />
+                                <span>{t.tracking}</span>
+                            </Link>
                             {renderSettingsLink(false)}
                         </div>
 
@@ -310,6 +322,18 @@ export default function AdminLayout({ title, children }) {
                                 <div className="my-3 border-t border-white/10" />
 
                                 {renderStatistics(true)}
+                                <Link
+                                    href={route('tracking.index')}
+                                    onClick={() => setMobileMenuOpen(false)}
+                                    className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
+                                        route().current('tracking.index')
+                                            ? 'border-l-2 border-white bg-white/10 text-white'
+                                            : 'text-slate-400 hover:bg-white/5 hover:text-white'
+                                    }`}
+                                >
+                                    <Code2 className="h-4 w-4" />
+                                    <span>{t.tracking}</span>
+                                </Link>
                                 {renderSettingsLink(true)}
                             </div>
 

@@ -74,22 +74,25 @@
 
 ## Шаг 3. Упрощение админки
 
+**Статус.** Выполнен. Проверка после деплоя — `php artisan nadia:smoke`.
+
 **Цель.** В меню нет удалённых модулей, есть заготовки новых разделов и вкладка Assistant.
 
-**Задачи.**
+**Сделано.**
 
-- Удалить Customers, Orders, Services, Staff, Calendar: роуты, контроллеры, модели, страницы, меню, миграции и таблицы.
-- Проверить вкладку App. Оставить, если она не зависит от удалённых модулей. Если зависит — убрать только связанные куски и описать это в отчёте.
-- Telegram не удалять.
-- Dashboard: заявки, визиты, конверсия = заявки / уникальные посетители за период. События `form_submit`, `chat_open` и `chat_lead` — отдельные счётчики.
-- Settings: вкладка Assistant — `assistant_system_prompt`, `assistant_greeting`, `chat_enabled`.
+- Удалены Customers, Orders, Services, Staff, Calendar: роуты, контроллеры, модели, страницы, меню. Таблицы сняты новой миграцией `drop_crm_tables`, старые файлы миграций удалены без отката.
+- Вкладка App убрана. `GET /app-settings` оставлен редиректом на `/settings`: имя `app-settings.index` ищет smoke кита.
+- Telegram, health, бейджи AI и Bot, переключатель en/ru/uk на месте.
+- Dashboard показывает четыре пустые KPI-карточки. Цифры — шаг 6.
+- Вкладка Assistant — заглушка. Сохранение `assistant_system_prompt`, `assistant_greeting`, `chat_enabled` — шаг 5.
+- Leads, Chats, Analytics, Tracking — заглушки шагов 4–7.
 
 **Приёмка.**
 
 - В меню нет пяти удалённых разделов, их URL отдают 404.
 - Таблиц этих модулей в БД нет.
-- Assistant сохраняет три настройки.
-- Dashboard открывается.
+- `nadia:smoke` завершается с кодом 0.
+- Dashboard и заглушки открываются залогиненным.
 - Telegram и health на месте.
 
 ## Шаг 4. Лендинг и заявки
@@ -120,6 +123,7 @@
 
 - Кнопка в правом нижнем углу. Скрыта, если чат выключен или нет активного провайдера.
 - `POST /chat/message` по правилам из [01-architecture.md](01-architecture.md): лимиты 1000 символов, 30 сообщений на сессию, 20 сообщений контекста, ~500 output tokens, throttle 20 запросов в минуту с IP.
+- Вкладка Assistant сейчас заглушка. Сохранить `assistant_system_prompt`, `assistant_greeting`, `chat_enabled`.
 - System prompt и приветствие из настроек Assistant.
 - Вырезать `<lead>{json}</lead>`, создать заявку `source=chat`, проставить `lead_id` и `chat_session_id`.
 - Раздел «Чаты»: сессии и переписка. Из заявки чата — переход в эту сессию.

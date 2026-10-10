@@ -5,25 +5,40 @@ export default function Dashboard() {
     const { locale = 'en' } = usePage().props;
     const text = {
         en: {
-            title: 'Home',
-            body: 'This is a placeholder home page. Login is successful.',
+            title: 'Dashboard',
+            leads: 'Leads',
+            visitors: 'Visitors',
+            conversion: 'Conversion',
+            chats: 'Chats',
         },
         ru: {
-            title: 'Главная',
-            body: 'Это заглушка главной страницы. Вход выполнен успешно.',
+            title: 'Дашборд',
+            leads: 'Заявки',
+            visitors: 'Визиты',
+            conversion: 'Конверсия',
+            chats: 'Чаты',
         },
         uk: {
-            title: 'Головна',
-            body: 'Це заглушка головної сторінки. Вхід виконано успішно.',
+            title: 'Дашборд',
+            leads: 'Заявки',
+            visitors: 'Візити',
+            conversion: 'Конверсія',
+            chats: 'Чати',
         },
     };
     const t = text[locale] ?? text.en;
+    const cards = [t.leads, t.visitors, t.conversion, t.chats];
 
     return (
         <AdminLayout title={t.title}>
             <Head title="Dashboard" />
-            <div className="app-widget p-4">
-                <p className="text-sm text-slate-700">{t.body}</p>
+            <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                {cards.map((label) => (
+                    <div key={label} className="app-widget p-4">
+                        <p className="text-sm text-slate-500">{label}</p>
+                        <p className="mt-2 text-2xl font-semibold text-slate-900">—</p>
+                    </div>
+                ))}
             </div>
         </AdminLayout>
     );

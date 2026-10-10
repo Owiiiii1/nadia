@@ -1,11 +1,11 @@
 import { usePage } from '@inertiajs/react';
 
-export default function AppPanel() {
+export default function AssistantPanel() {
     const { locale = 'en' } = usePage().props;
     const text = {
-        en: { body: 'App settings placeholder.' },
-        ru: { body: 'App settings placeholder.' },
-        uk: { body: 'App settings placeholder.' },
+        en: { body: 'Coming in step 5' },
+        ru: { body: 'Coming in step 5' },
+        uk: { body: 'Coming in step 5' },
     };
     const t = text[locale] ?? text.en;
 

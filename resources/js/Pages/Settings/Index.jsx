@@ -2,7 +2,7 @@ import AdminLayout from '@/Layouts/AdminLayout';
 import { Head, router, usePage } from '@inertiajs/react';
 import { useEffect, useMemo, useState } from 'react';
 import AiPanel from './AiPanel';
-import AppPanel from './AppPanel';
+import AssistantPanel from './AssistantPanel';
 import GeneralPanel from './GeneralPanel';
 import TelegramPanel from './TelegramPanel';
 import UsersPanel from './UsersPanel';
@@ -21,7 +21,7 @@ export default function SettingsIndex() {
             general: 'General',
             users: 'Users',
             ai: 'AI',
-            app: 'App settings',
+            assistant: 'Assistant',
             telegram: 'Telegram',
         },
         ru: {
@@ -29,7 +29,7 @@ export default function SettingsIndex() {
             general: 'General',
             users: 'Users',
             ai: 'AI',
-            app: 'App settings',
+            assistant: 'Ассистент',
             telegram: 'Telegram',
         },
         uk: {
@@ -37,7 +37,7 @@ export default function SettingsIndex() {
             general: 'General',
             users: 'Users',
             ai: 'AI',
-            app: 'App settings',
+            assistant: 'Асистент',
             telegram: 'Telegram',
         },
     };
@@ -48,10 +48,10 @@ export default function SettingsIndex() {
             { id: 'general', label: t.general },
             { id: 'users', label: t.users },
             { id: 'ai', label: t.ai },
-            { id: 'app', label: t.app },
+            { id: 'assistant', label: t.assistant },
             { id: 'telegram', label: t.telegram },
         ],
-        [t.ai, t.app, t.general, t.telegram, t.users],
+        [t.ai, t.assistant, t.general, t.telegram, t.users],
     );
 
     const switchTab = (nextTab) => {
@@ -100,7 +100,7 @@ export default function SettingsIndex() {
                 {activeTab === 'general' && <GeneralPanel />}
                 {activeTab === 'users' && <UsersPanel />}
                 {activeTab === 'ai' && <AiPanel />}
-                {activeTab === 'app' && <AppPanel />}
+                {activeTab === 'assistant' && <AssistantPanel />}
                 {activeTab === 'telegram' && <TelegramPanel />}
             </div>
         </AdminLayout>

@@ -1,6 +1,6 @@
 # 01. Архитектура
 
-Одно Laravel-приложение. Публичный лендинг — Blade и vanilla JS. Админка — страницы кита на Inertia и Vite. Общие: БД, `.env`, пользователи кита, `ai_provider_settings`.
+Одно Laravel-приложение. Публичный лендинг — Blade и vanilla JS. Админка — React/JSX через Inertia и Vite (кит v0.5.0). Общие: БД, `.env`, пользователи кита, `ai_provider_settings`.
 
 ```mermaid
 flowchart LR
@@ -45,22 +45,18 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 
 ## Роуты админки
 
-Префикс и имена роутов — как их задаёт кит v0.5.0. В брифе явно назван путь `owl-admin/health`.
+Фронт — `resources/js`, страницы `resources/js/Pages/**/*.jsx`, каркас `AdminLayout.jsx`. Меню слева, подписи en/ru/uk:
 
-Оставить:
+1. Dashboard — `dashboard`, `GET /dashboard`. Четыре KPI (заявки, визиты, конверсия, чаты) пока «—». Цифры и события `form_submit`, `chat_open`, `chat_lead` — шаг 6.
+2. Leads — `leads.index`, `GET /leads`. Заглушка шага 4.
+3. Chats — `chats.index`, `GET /chats`. Заглушка шага 5.
+4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics` (шаг 6); Logs — `statistics.logs`, `GET /statistics/logs`.
+5. Pixels & codes — `tracking.index`, `GET /tracking-codes`. Заглушка шага 7.
+6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`, заглушка шага 5), Telegram.
 
-- Auth
-- Dashboard, переделанный под KPI: заявки, визиты, конверсия = заявки / уникальные посетители за период. События `form_submit`, `chat_open`, `chat_lead` — отдельные счётчики
-- Settings: General, Users, AI, новая вкладка Assistant
-- Profile
-- Statistics / Logs
-- `owl-admin/health`
-- Telegram
-- App, если вкладка не завязана на Customers, Orders, Services, Staff, Calendar
+Рядом остаются Auth, Profile (`profile.edit`), `GET /ai-settings` (редирект кита на вкладку AI), `GET /owl-admin/health`, `POST /telegram/webhook`. `GET /app-settings` (`app-settings.index`) оставлен только потому, что smoke кита ищет это имя: редирект на `/settings` без вкладки App. Вкладки App в настройках нет.
 
-Удалить вместе с роутами, контроллерами, моделями, страницами, пунктами меню, миграциями и таблицами: Customers, Orders, Services, Staff, Calendar.
-
-Добавить разделы: Заявки, Чаты, Аналитика, Пиксели и коды.
+CRM-модули Customers, Orders, Services, Staff, Calendar из приложения убраны. Их URL больше не зарегистрированы.
 
 ## Как чат берёт провайдера
 

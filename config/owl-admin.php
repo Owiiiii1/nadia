@@ -2,14 +2,14 @@
 
 return [
 
-    'name' => env('OWL_ADMIN_BRAND', 'Service Admin'),
+    'name' => env('OWL_ADMIN_BRAND', 'Nadia Glavin'),
 
-    'brand_name' => env('OWL_ADMIN_BRAND', 'Service Admin'),
+    'brand_name' => env('OWL_ADMIN_BRAND', 'Nadia Glavin'),
 
     'logo_path' => env('OWL_ADMIN_LOGO', '/images/company-logo.svg'),
 
     'branding' => [
-        'brand_name' => env('OWL_ADMIN_BRAND', 'Service Admin'),
+        'brand_name' => env('OWL_ADMIN_BRAND', 'Nadia Glavin'),
         'logo_path' => env('OWL_ADMIN_LOGO', '/images/company-logo.svg'),
     ],
 

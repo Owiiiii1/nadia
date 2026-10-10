@@ -15,7 +15,10 @@ php artisan migrate --force
 npm ci && npm run build
 php artisan optimize
 sudo systemctl reload php8.5-fpm
+php artisan nadia:smoke
 ```
+
+Проверка после деплоя — `php artisan nadia:smoke`. Код 0 значит, что каркас админки на месте: нужные роуты есть, CRM-роутов и таблиц нет, Vite-манифест содержит новые страницы. `owl-admin:smoke` кита по-прежнему ждёт модули Customers/Orders/Services/Staff/Calendar и после шага 3 не используется.
 
 `git pull` — fast-forward `main`. Если история разошлась, деплой останавливается, force pull не делается.
 

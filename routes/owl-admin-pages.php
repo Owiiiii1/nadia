@@ -1,11 +1,6 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\CalendarController;
-use App\Http\Controllers\CustomersController;
-use App\Http\Controllers\OrdersController;
-use App\Http\Controllers\ServicesController;
-use App\Http\Controllers\StaffController;
 use App\Http\Controllers\TelegramWebhookController;
 use App\Http\Controllers\Settings\AiSettingsController;
 use App\Http\Controllers\Settings\SettingsController;
@@ -33,29 +28,21 @@ Route::middleware(AdminRouteMiddleware::stack())->group(function () {
         return Inertia::render('Dashboard');
     })->name('dashboard');
 
-    Route::get('/customers', [CustomersController::class, 'index'])->name('customers.index');
-    Route::post('/customers', [CustomersController::class, 'store'])->name('customers.store');
-    Route::patch('/customers/{customer}', [CustomersController::class, 'update'])->name('customers.update');
-    Route::delete('/customers/{customer}', [CustomersController::class, 'destroy'])->name('customers.destroy');
+    Route::get('/leads', function () {
+        return Inertia::render('Leads/Index');
+    })->name('leads.index');
 
-    Route::get('/orders', [OrdersController::class, 'index'])->name('orders.index');
-    Route::post('/orders', [OrdersController::class, 'store'])->name('orders.store');
-    Route::patch('/orders/{order}', [OrdersController::class, 'update'])->name('orders.update');
-    Route::delete('/orders/{order}', [OrdersController::class, 'destroy'])->name('orders.destroy');
-    Route::patch('/orders/{order}/status', [OrdersController::class, 'updateStatus'])->name('orders.status');
-    Route::patch('/orders/{order}/assign', [OrdersController::class, 'assign'])->name('orders.assign');
+    Route::get('/chats', function () {
+        return Inertia::render('Chats/Index');
+    })->name('chats.index');
 
-    Route::get('/services', [ServicesController::class, 'index'])->name('services.index');
-    Route::post('/services', [ServicesController::class, 'store'])->name('services.store');
-    Route::patch('/services/{service}', [ServicesController::class, 'update'])->name('services.update');
-    Route::delete('/services/{service}', [ServicesController::class, 'destroy'])->name('services.destroy');
+    Route::get('/analytics', function () {
+        return Inertia::render('Analytics/Index');
+    })->name('analytics.index');
 
-    Route::get('/staff', [StaffController::class, 'index'])->name('staff.index');
-    Route::post('/staff', [StaffController::class, 'store'])->name('staff.store');
-    Route::patch('/staff/{staff}', [StaffController::class, 'update'])->name('staff.update');
-    Route::delete('/staff/{staff}', [StaffController::class, 'destroy'])->name('staff.destroy');
-
-    Route::get('/calendar', [CalendarController::class, 'index'])->name('calendar.index');
+    Route::get('/tracking-codes', function () {
+        return Inertia::render('Tracking/Index');
+    })->name('tracking.index');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
     Route::post('/settings/language', [SettingsController::class, 'updateLanguage'])->name('settings.language.update');
@@ -72,8 +59,9 @@ Route::middleware(AdminRouteMiddleware::stack())->group(function () {
     Route::post('/settings/telegram/remove-webhook', [TelegramSettingsController::class, 'removeWebhook'])
         ->name('settings.telegram.remove-webhook');
 
+    // Kit smoke still looks up this name. The App tab is gone; the URL only redirects.
     Route::get('/app-settings', function () {
-        return redirect()->route('settings.index', ['tab' => 'app']);
+        return redirect()->route('settings.index');
     })->name('app-settings.index');
 
     Route::get('/ai-settings', [AiSettingsController::class, 'index'])->name('ai-settings.index');
