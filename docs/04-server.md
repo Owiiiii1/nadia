@@ -28,26 +28,23 @@
 
 Расширения, которые просили: mbstring, xml, curl, mysql, zip, bcmath, intl, gd, readline. OPcache — встроенный.
 
-## Права на шаге 2
+## Права
 
-`deploy` уже пишет в `/var/www/nadia`. Каталогов `storage` и `bootstrap/cache` ещё нет, ACL на шаге 1 не ставились.
-
-Когда Laravel будет на месте, выдать `www-data` запись:
+Корень `/var/www/nadia` — `deploy:www-data`, режим `2775`. На шаге 2 выставлен ACL на `storage` и `bootstrap/cache`:
 
 ```bash
-sudo setfacl -R -m u:www-data:rwX storage bootstrap/cache
-sudo setfacl -R -d -m u:www-data:rwX storage bootstrap/cache
+sudo setfacl -R -m u:www-data:rwX -m u:deploy:rwX storage bootstrap/cache
+sudo setfacl -dR -m u:www-data:rwX -m u:deploy:rwX storage bootstrap/cache
 ```
 
-Cron `schedule:run` от `www-data` добавляется там же, после появления `artisan`:
+Cron `schedule:run` от `www-data` ещё не добавлен: шаг 2 остановился до этого пункта. Строка, которую нужно поставить после решения по киту:
 
 ```cron
 * * * * * cd /var/www/nadia && php artisan schedule:run >> /dev/null 2>&1
 ```
 
-## Что остаётся на шаг 2
+## Что остаётся
 
-- Виртуальный хост nginx с `root` на `public` и сокетом `/run/php/php8.5-fpm.sock`.
-- Сертификат certbot для `nadia.owlsolutions.net`.
-- Laravel 12 и кит. Если кит v0.5.0 не встанет на PHP 8.5, вопрос версии PHP открывается снова.
-- Пароль БД переносится в `.env` на сервере. Файл кредов не коммитится.
+- Кит v0.5.0 не встал на Laravel 12: пакет требует `illuminate/* ^13.0`. См. вопрос 13 в [07-open-questions.md](07-open-questions.md).
+- Виртуальный хост nginx и сертификат не делались.
+- Пароль БД уже в `.env` на сервере. Файл кредов и `.env` не в git.
