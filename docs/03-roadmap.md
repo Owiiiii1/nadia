@@ -51,11 +51,11 @@
 
 ## Шаг 2. Laravel, кит, SSL
 
-**Цель.** Пустое приложение Laravel 12 с китом v0.5.0 открывается по HTTPS.
+**Цель.** Пустое приложение Laravel 13 с китом v0.5.0 открывается по HTTPS.
 
 **Задачи.**
 
-- Создать Laravel 12 во временном каталоге и перенести в `/var/www/nadia` по правилам из [01-architecture.md](01-architecture.md). Не затереть `docs/`, `reference/`, `reports/`, `README.md`, `.git`. Не коммитить `.env`.
+- Создать Laravel 13 во временном каталоге и перенести в `/var/www/nadia` по правилам из [01-architecture.md](01-architecture.md). Не затереть `docs/`, `reference/`, `reports/`, `README.md`, `.git`. Не коммитить `.env`. Скелет Laravel 12 не апгрейдить, а заменить чистым 13.
 - Поставить кит по `reference/admin-kit-install.md` версии v0.5.0. В примере nginx там указан сокет `php8.3-fpm.sock`; на этом сервере сокет `/run/php/php8.5-fpm.sock`. Саму инструкцию не переписывать.
 - База в `.env` — пользователь и БД из шага 1.
 - Выпустить сертификат certbot на `nadia.owlsolutions.net`.

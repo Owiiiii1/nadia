@@ -8,7 +8,7 @@
 
 ## Стек
 
-- Laravel 12
+- Laravel 13
 - owlsolutions/custom-admin-kit v0.5.0 (Inertia и Vite только для админки)
 - MySQL
 - PHP 8.5-FPM из архива Ubuntu 26.04, сокет `/run/php/php8.5-fpm.sock`

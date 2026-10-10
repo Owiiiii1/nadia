@@ -10,7 +10,7 @@
 | Swap | `/swapfile` 2 ГБ, строка в `/etc/fstab`, `vm.swappiness=10` в `/etc/sysctl.d/99-swap.conf` |
 | ufw | Включён. Входящие: OpenSSH, 80/tcp, 443/tcp |
 | fail2ban | Jail `sshd`, `backend = systemd`, сервис включён. Конфиг пакета: `/etc/fail2ban/jail.d/defaults-debian.conf` |
-| nginx | 1.28.3, `server_tokens off`. Default site убран из `sites-enabled`. Своего vhost нет, порты 80 и 443 пока не слушаются |
+| nginx | 1.28.3, `server_tokens off`. Vhost `nadia.owlsolutions.net`, сокет `/run/php/php8.5-fpm.sock`, HTTPS certbot, редирект HTTP → HTTPS |
 | PHP | 8.5.4 FPM и CLI. Сокет `/run/php/php8.5-fpm.sock`, пул `www`, пользователь `www-data`, `pm=dynamic`, `pm.max_children=10` |
 | PHP ini | FPM и CLI: `upload_max_filesize=20M`, `post_max_size=25M`, `expose_php=Off`. FPM: `memory_limit=256M` |
 | MySQL | 8.4.11, слушает только `127.0.0.1` (3306 и mysqlx 33060). `innodb_buffer_pool_size=512M` в `/etc/mysql/mysql.conf.d/zz-nadia.cnf` |
@@ -37,7 +37,7 @@ sudo setfacl -R -m u:www-data:rwX -m u:deploy:rwX storage bootstrap/cache
 sudo setfacl -dR -m u:www-data:rwX -m u:deploy:rwX storage bootstrap/cache
 ```
 
-Cron `schedule:run` от `www-data` ещё не добавлен: шаг 2 остановился до этого пункта. Строка, которую нужно поставить после решения по киту:
+Cron `schedule:run` от `www-data`:
 
 ```cron
 * * * * * cd /var/www/nadia && php artisan schedule:run >> /dev/null 2>&1
@@ -45,6 +45,5 @@ Cron `schedule:run` от `www-data` ещё не добавлен: шаг 2 ос�
 
 ## Что остаётся
 
-- Кит v0.5.0 не встал на Laravel 12: пакет требует `illuminate/* ^13.0`. См. вопрос 13 в [07-open-questions.md](07-open-questions.md).
-- Виртуальный хост nginx и сертификат не делались.
-- Пароль БД уже в `.env` на сервере. Файл кредов и `.env` не в git.
+- Пароль БД и пароль админа лежат только на сервере: `/home/deploy/.nadia-db-credentials`, `/home/deploy/.nadia-admin-credentials`, `.env`. В git их нет.
+- Копия vhost после certbot: `deploy/nginx/nadia.owlsolutions.net.conf`.

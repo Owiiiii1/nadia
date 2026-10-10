@@ -113,7 +113,7 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 
 Порядок:
 
-1. `composer create-project laravel/laravel` во временный каталог, ветка/constraint Laravel 12.
+1. `composer create-project laravel/laravel` во временный каталог, constraint Laravel 13.
 2. Скопировать проект в `/var/www/nadia` без `--delete` и без замены `.git`.
 3. Не затирать `README.md`, `docs/`, `reference/`, `reports/`.
 4. Файл `.env` из временного проекта не коммитить. В git попадает только `.env.example`, после правок под MySQL этого сайта.

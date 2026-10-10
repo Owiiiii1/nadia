@@ -1,6 +1,6 @@
 # Nadia Glavin
 
-Сайт-визитка риелтора (Чикаго) и упрощённая админка в одном приложении Laravel 12.
+Сайт-визитка риелтора (Чикаго) и упрощённая админка в одном приложении Laravel 13.
 
 Публичная часть — обычный Blade-лендинг и vanilla JS. Админка — пакет `owlsolutions/custom-admin-kit` v0.5.0 (Inertia, Vite). Домен: `nadia.owlsolutions.net`.
 
