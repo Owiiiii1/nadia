@@ -41,7 +41,7 @@ flowchart LR
 
 `POST /leads` и `POST /chat/message` проходят CSRF, валидацию и throttle. На форме дополнительно honeypot. `POST /t` тоже с CSRF-токеном в теле запроса: `sendBeacon` умеет отправить `FormData` с `_token`.
 
-Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/message` — 20 запросов в минуту, `/t` — 60 запросов в минуту. Лимит 30 сообщений на сессию чата считается отдельно.
+Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/message` — 20 запросов в минуту, `/t` — 60 запросов в минуту. Числа чата лежат в `config/nadia.php`: 20 запросов в минуту с IP, 30 сообщений пользователя на сессию, 100 сообщений пользователя в сутки на `ip_hash`, 1500 сообщений пользователя в сутки на весь сайт (`nadia.chat.daily_global_limit`), сообщение до 1000 символов, в контекст — последние 20 сообщений, ответ до 500 output tokens.
 
 ## Роуты админки
 
@@ -49,10 +49,10 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 
 1. Dashboard — `dashboard`, `GET /dashboard`. KPI Leads — заявки за последние 30 дней без spam. Визиты, конверсия и чаты пока «—». События `form_submit`, `chat_open`, `chat_lead` — шаг 6.
 2. Leads — `leads.index` `GET /leads`, `leads.show` `GET /leads/{lead}`, `leads.update` `PATCH /leads/{lead}`, `leads.destroy` `DELETE /leads/{lead}`, `leads.export` `GET /leads/export.csv`. В меню бейдж `status=new`. Публичная запись — `leads.store` `POST /leads` (throttle `leads`, 5/мин по IP), вне auth.
-3. Chats — `chats.index`, `GET /chats`. Заглушка шага 5.
+3. Chats — `chats.index` `GET /chats`, `chats.show` `GET /chats/{session}`, `chats.destroy` `DELETE /chats/{session}`. Список по 25, фильтр «только с заявкой» и период как у заявок.
 4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics` (шаг 6); Logs — `statistics.logs`, `GET /statistics/logs`.
 5. Pixels & codes — `tracking.index`, `GET /tracking-codes`. Заглушка шага 7.
-6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`, заглушка шага 5), Telegram.
+6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`), Telegram. Assistant сохраняется через `settings.assistant.update` (`PUT /settings/assistant`) и `settings.assistant.reset` (`POST /settings/assistant/reset`).
 
 Рядом остаются Auth, Profile (`profile.edit`), `GET /ai-settings` (редирект кита на вкладку AI), `GET /owl-admin/health`, `POST /telegram/webhook`. `GET /app-settings` (`app-settings.index`) оставлен только потому, что smoke кита ищет это имя: редирект на `/settings` без вкладки App. Вкладки App в настройках нет.
 
@@ -60,15 +60,15 @@ CRM-модули Customers, Orders, Services, Staff, Calendar из прилож�
 
 ## Как чат берёт провайдера
 
-1. Лендинг показывает кнопку чата только если в `site_settings` чат включён (`chat_enabled`) и в `ai_provider_settings` есть активный провайдер. Решение принимается на сервере при рендере `GET /`.
-2. `POST /chat/message` читает активные провайдер и модель из `ai_provider_settings`. Ключ расшифровывает кит, в репозиторий и в логи он не попадает.
-3. В запрос к провайдеру уходят system prompt из `site_settings.assistant_system_prompt` и последние 20 сообщений сессии. Ответ ограничен примерно 500 output tokens.
-4. Сессия создаётся по `uuid`. У неё не больше 30 сообщений. Одно сообщение пользователя — не больше 1000 символов. Сверх лимита запрос отклоняется.
-5. Если в тексте ответа есть `<lead>{json}</lead>`, блок вырезается до отдачи клиенту. JSON — те же поля, что у формы: `name`, `email`, `phone`, `goal`, `message`. Заявка создаётся при непустом `name` и непустом `email` или `phone`, с `source=chat` и ссылкой на сессию. Невалидный блок не создаёт заявку и не показывается посетителю.
+1. Лендинг показывает кнопку чата только если в `site_settings` чат включён (`chat_enabled`, по умолчанию да) и в `ai_provider_settings` есть строка с `is_active` и `is_connected`. Решение принимается на сервере при рендере `GET /`. Виджет — отдельные `resources/js/chat-widget.js` и `resources/css/chat-widget.css`, без React.
+2. `POST /chat/message` берёт активную запись `AiProviderSetting`. Ключ читается через cast `encrypted` кита и в логи не пишется. У кита есть только `listModels`: генерации ответа в `AiProviderManager` нет, поэтому запрос делает `App\Ai\ChatClient`. OpenAI — Chat Completions (`max_tokens`), Anthropic — Messages API с заголовком `anthropic-version`, Gemini — `generateContent`. Таймаут 30 секунд, один повтор через 1 секунду на 429 и 5xx.
+3. В запрос уходят system prompt из `site_settings.assistant_system_prompt` и последние 20 сообщений сессии. Первая строка промпта `[DRAFT — replace with client-approved prompt]` в модель не отправляется. Ответ ограничен 500 output tokens. Если провайдер отвечает ошибкой, посетитель получает запасной текст, а в `chat_messages.error` пишется короткая причина без ключа.
+4. Сессия создаётся на первом сообщении. В неё пишутся `visitor_id` из cookie `nadia_vid`, `ip_hash`, user agent и атрибуция из cookie `nadia_ft` (source, medium, campaign, referrer, landing path). Эти две cookie не шифруются: их ставит JS лендинга. На сессию — не больше 30 сообщений пользователя. Сверх лимита — 429. Суточные потолки: 100 на `ip_hash` и 1500 на сайт.
+5. Блоки `<lead>{json}</lead>` и незакрытый хвост `<lead` вырезаются до сохранения и до ответа. JSON: `name`, `email`, `phone`, `goal`, `summary`. Заявка создаётся при непустом `name` и непустом `email` или `phone`, `source=chat`, `message` = summary, ссылки в обе стороны. Повторный блок той же сессии дописывает только пустые поля и не шлёт `LeadCreated`. Невалидный блок игнорируется, в лог пишется warning без персональных данных. Неизвестный `goal` сохраняется как `consult`.
 
-Приветствие (`assistant_greeting`) показывается в виджете, это не вызов провайдера.
+Приветствие (`assistant_greeting`) показывается в виджете первым сообщением. В API и в базу оно не уходит.
 
-Провайдеры, которые должен уметь активный ряд кита: OpenAI, Anthropic, Gemini.
+Провайдеры активной строки кита: OpenAI, Anthropic, Gemini.
 
 ## Заявки
 

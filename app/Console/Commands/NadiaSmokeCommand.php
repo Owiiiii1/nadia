@@ -2,6 +2,7 @@
 
 namespace App\Console\Commands;
 
+use App\Support\ChatAvailability;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -30,6 +31,9 @@ class NadiaSmokeCommand extends Command
             'leads.destroy',
             'leads.export',
             'chats.index',
+            'chats.show',
+            'chats.destroy',
+            'chat.message',
             'analytics.index',
             'tracking.index',
             'settings.index',
@@ -59,7 +63,7 @@ class NadiaSmokeCommand extends Command
             $ok = $this->mark(! Schema::hasTable($table), "table {$table} absent") && $ok;
         }
 
-        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads'] as $table) {
+        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads', 'chat_sessions', 'chat_messages', 'site_settings'] as $table) {
             $ok = $this->mark(Schema::hasTable($table), "table {$table} present") && $ok;
         }
 
@@ -80,6 +84,8 @@ class NadiaSmokeCommand extends Command
             'resources/js/Pages/Settings/AssistantPanel.jsx',
             'resources/js/landing.js',
             'resources/css/landing.css',
+            'resources/js/chat-widget.js',
+            'resources/css/chat-widget.css',
         ] as $page) {
             $ok = $this->mark(isset($manifest[$page]), "manifest {$page}") && $ok;
         }
@@ -92,6 +98,13 @@ class NadiaSmokeCommand extends Command
             && str_contains($body, 'Chicago real estate, handled strategically.');
         $kernel->terminate($request, $response);
         $ok = $this->mark($landingOk, 'GET / returns the landing headline') && $ok;
+
+        try {
+            $chatLine = app(ChatAvailability::class)->statusLine();
+        } catch (\Throwable) {
+            $chatLine = 'chat available: no (none)';
+        }
+        $this->line('· '.$chatLine);
 
         return $ok ? self::SUCCESS : self::FAILURE;
     }

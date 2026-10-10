@@ -123,8 +123,8 @@
 **Задачи.**
 
 - Кнопка в правом нижнем углу. Скрыта, если чат выключен или нет активного провайдера.
-- `POST /chat/message` по правилам из [01-architecture.md](01-architecture.md): лимиты 1000 символов, 30 сообщений на сессию, 20 сообщений контекста, ~500 output tokens, throttle 20 запросов в минуту с IP.
-- Вкладка Assistant сейчас заглушка. Сохранить `assistant_system_prompt`, `assistant_greeting`, `chat_enabled`.
+- `POST /chat/message` по правилам из [01-architecture.md](01-architecture.md): лимиты 1000 символов, 30 сообщений пользователя на сессию, 100 в сутки на `ip_hash`, 1500 в сутки на сайт, 20 сообщений контекста, 500 output tokens, throttle 20 запросов в минуту с IP.
+- Вкладка Assistant сохраняет `assistant_system_prompt`, `assistant_greeting`, `chat_enabled`. Черновик промпта помечен первой строкой и в модель не уходит.
 - System prompt и приветствие из настроек Assistant.
 - Вырезать `<lead>{json}</lead>`, создать заявку `source=chat`, проставить `lead_id` и `chat_session_id`.
 - Раздел «Чаты»: сессии и переписка. Из заявки чата — переход в эту сессию.

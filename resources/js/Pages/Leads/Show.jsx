@@ -1,3 +1,4 @@
+import ChatTranscript from '@/Components/ChatTranscript';
 import AdminLayout from '@/Layouts/AdminLayout';
 import { Button } from '@/Components/ui/button';
 import {
@@ -29,13 +30,23 @@ export default function LeadShow({ lead, statuses }) {
             cancel: 'Cancel',
             deleteTitle: 'Delete this lead?',
             deleteBody: 'This cannot be undone.',
-            chat: 'Chat transcript — step 5',
+            chat: 'Chat',
+            openChat: 'Open chat',
             message: 'Message',
             phone: 'Phone',
             goal: 'Goal',
             source: 'Source',
             created: 'Created',
             updated: 'Updated',
+            utmSource: 'UTM source',
+            utmMedium: 'UTM medium',
+            utmCampaign: 'UTM campaign',
+            utmTerm: 'UTM term',
+            utmContent: 'UTM content',
+            referrer: 'Referrer',
+            landing: 'Landing page',
+            visitor: 'Visitor ID',
+            agent: 'User agent',
         },
         ru: {
             back: 'К списку',
@@ -46,13 +57,23 @@ export default function LeadShow({ lead, statuses }) {
             cancel: 'Отмена',
             deleteTitle: 'Удалить заявку?',
             deleteBody: 'Это нельзя отменить.',
-            chat: 'Chat transcript — step 5',
+            chat: 'Чат',
+            openChat: 'Открыть чат',
             message: 'Сообщение',
             phone: 'Телефон',
             goal: 'Цель',
             source: 'Источник',
             created: 'Создана',
             updated: 'Обновлена',
+            utmSource: 'UTM source',
+            utmMedium: 'UTM medium',
+            utmCampaign: 'UTM campaign',
+            utmTerm: 'UTM term',
+            utmContent: 'UTM content',
+            referrer: 'Реферер',
+            landing: 'Страница',
+            visitor: 'ID посетителя',
+            agent: 'User agent',
         },
         uk: {
             back: 'До списку',
@@ -63,13 +84,23 @@ export default function LeadShow({ lead, statuses }) {
             cancel: 'Скасувати',
             deleteTitle: 'Видалити заявку?',
             deleteBody: 'Це не можна скасувати.',
-            chat: 'Chat transcript — step 5',
+            chat: 'Чат',
+            openChat: 'Відкрити чат',
             message: 'Повідомлення',
             phone: 'Телефон',
             goal: 'Ціль',
             source: 'Джерело',
             created: 'Створена',
             updated: 'Оновлена',
+            utmSource: 'UTM source',
+            utmMedium: 'UTM medium',
+            utmCampaign: 'UTM campaign',
+            utmTerm: 'UTM term',
+            utmContent: 'UTM content',
+            referrer: 'Реферер',
+            landing: 'Сторінка',
+            visitor: 'ID відвідувача',
+            agent: 'User agent',
         },
     };
     const t = text[locale] ?? text.en;
@@ -81,17 +112,15 @@ export default function LeadShow({ lead, statuses }) {
         [t.goal, lead.goal_label],
         [t.source, lead.source_label],
         [t.message, lead.message || '—'],
-        ['utm_source', lead.utm_source || '—'],
-        ['utm_medium', lead.utm_medium || '—'],
-        ['utm_campaign', lead.utm_campaign || '—'],
-        ['utm_term', lead.utm_term || '—'],
-        ['utm_content', lead.utm_content || '—'],
-        ['referrer', lead.referrer || '—'],
-        ['landing_path', lead.landing_path || '—'],
-        ['visitor_id', lead.visitor_id || '—'],
-        ['user_agent', lead.user_agent || '—'],
-        ['ip_hash', lead.ip_hash || '—'],
-        ['chat_session_id', lead.chat_session_id || '—'],
+        [t.utmSource, lead.utm_source || '—'],
+        [t.utmMedium, lead.utm_medium || '—'],
+        [t.utmCampaign, lead.utm_campaign || '—'],
+        [t.utmTerm, lead.utm_term || '—'],
+        [t.utmContent, lead.utm_content || '—'],
+        [t.referrer, lead.referrer || '—'],
+        [t.landing, lead.landing_path || '—'],
+        [t.visitor, lead.visitor_id || '—'],
+        [t.agent, lead.user_agent || '—'],
     ];
 
     const save = (event) => {
@@ -114,9 +143,13 @@ export default function LeadShow({ lead, statuses }) {
                     ))}
                 </div>
 
-                {lead.source === 'chat' && (
-                    <div className="app-widget p-4">
-                        <p className="text-sm text-slate-700">{t.chat}</p>
+                {lead.chat && (
+                    <div className="app-widget space-y-3 p-4">
+                        <div className="flex items-center justify-between gap-3">
+                            <p className="text-sm font-medium text-slate-800">{t.chat}</p>
+                            <Link href={route('chats.show', lead.chat.id)} className="text-sm underline">{t.openChat}</Link>
+                        </div>
+                        <ChatTranscript messages={lead.chat.messages || []} />
                     </div>
                 )}
 

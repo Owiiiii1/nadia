@@ -14,15 +14,6 @@ class LeadTest extends TestCase
 {
     use RefreshDatabase;
 
-    protected function setUp(): void
-    {
-        if (getenv('DB_DATABASE') !== 'nadia_test') {
-            $this->fail('Refusing to run. DB_DATABASE='.getenv('DB_DATABASE'));
-        }
-
-        parent::setUp();
-    }
-
     public function test_json_lead_is_stored_with_attribution_and_event(): void
     {
         Event::fake([LeadCreated::class]);

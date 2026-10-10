@@ -6,6 +6,7 @@ use App\Enums\LeadGoal;
 use App\Enums\LeadSource;
 use App\Enums\LeadStatus;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
 class Lead extends Model
 {
@@ -38,5 +39,10 @@ class Lead extends Model
             'source' => LeadSource::class,
             'status' => LeadStatus::class,
         ];
+    }
+
+    public function chatSession(): BelongsTo
+    {
+        return $this->belongsTo(ChatSession::class);
     }
 }

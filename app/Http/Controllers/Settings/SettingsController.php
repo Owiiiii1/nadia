@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
+use App\Http\Controllers\Settings\AssistantSettingsController;
 use App\Models\TelegramBotSetting;
 use App\Models\User;
 use Illuminate\Http\RedirectResponse;
@@ -39,6 +40,7 @@ class SettingsController extends Controller
             'users' => $users,
             'providers' => $aiSettings->providersPayload(),
             'telegram' => $this->telegramPayload(),
+            'assistant' => app(AssistantSettingsController::class)->payload(),
             'tab' => $tab,
         ]);
     }

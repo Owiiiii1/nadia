@@ -223,5 +223,9 @@
     </div>
   </footer>
   @stack('body_end_codes')
+  @if ($chatAvailable)
+    <script type="application/json" id="nadia-chat-boot">@json(['greeting' => $chatGreeting])</script>
+    @vite(['resources/css/chat-widget.css', 'resources/js/chat-widget.js'])
+  @endif
 </body>
 </html>

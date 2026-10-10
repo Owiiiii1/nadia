@@ -8,6 +8,7 @@ use App\Enums\LeadStatus;
 use App\Events\LeadCreated;
 use App\Http\Requests\StoreLeadRequest;
 use App\Http\Requests\UpdateLeadRequest;
+use App\Models\ChatMessage;
 use App\Models\Lead;
 use App\Support\IpHasher;
 use Carbon\CarbonInterface;
@@ -277,8 +278,35 @@ class LeadController extends Controller
             'visitor_id' => $lead->visitor_id,
             'chat_session_id' => $lead->chat_session_id,
             'user_agent' => $lead->user_agent,
-            'ip_hash' => $lead->ip_hash,
             'updated_at' => $this->formatDate($lead->updated_at),
+            'chat' => $this->chatPayload($lead),
+        ];
+    }
+
+    /**
+     * @return array{id: int, messages: list<array<string, mixed>>}|null
+     */
+    private function chatPayload(Lead $lead): ?array
+    {
+        if ($lead->chat_session_id === null) {
+            return null;
+        }
+
+        $session = $lead->chatSession()->with('messages')->first();
+
+        if ($session === null) {
+            return null;
+        }
+
+        return [
+            'id' => $session->id,
+            'messages' => $session->messages->map(fn (ChatMessage $message): array => [
+                'id' => $message->id,
+                'role' => $message->role,
+                'content' => $message->content,
+                'error' => $message->error,
+                'created_at' => $this->formatDate($message->created_at),
+            ])->all(),
         ];
     }
 

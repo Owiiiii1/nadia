@@ -1,7 +1,9 @@
 <?php
 
 use App\Enums\LeadStatus;
+use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\Settings\AssistantSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Models\Lead;
 use Illuminate\Support\Facades\Schema;
@@ -49,9 +51,11 @@ Route::middleware(AdminRouteMiddleware::stack())->group(function () {
     Route::patch('/leads/{lead}', [LeadController::class, 'update'])->name('leads.update');
     Route::delete('/leads/{lead}', [LeadController::class, 'destroy'])->name('leads.destroy');
 
-    Route::get('/chats', function () {
-        return Inertia::render('Chats/Index');
-    })->name('chats.index');
+    Route::get('/chats', [ChatSessionController::class, 'index'])->name('chats.index');
+    Route::get('/chats/{session}', [ChatSessionController::class, 'show'])->name('chats.show');
+    Route::delete('/chats/{session}', [ChatSessionController::class, 'destroy'])->name('chats.destroy');
+    Route::put('/settings/assistant', [AssistantSettingsController::class, 'update'])->name('settings.assistant.update');
+    Route::post('/settings/assistant/reset', [AssistantSettingsController::class, 'reset'])->name('settings.assistant.reset');
 
     Route::get('/analytics', function () {
         return Inertia::render('Analytics/Index');

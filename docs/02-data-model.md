@@ -52,10 +52,16 @@ Email не уникален: повторные заявки сохраняют�
 | --- | --- | --- | --- |
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
 | uuid | CHAR(36) | нет | UNIQUE. Идентификатор сессии в API |
-| visitor_id | CHAR(36) | да | |
+| visitor_id | CHAR(36) | да | Cookie `nadia_vid` |
 | ip_hash | CHAR(64) | да | |
-| messages_count | INT UNSIGNED | нет | По умолчанию 0. Лимит сессии — 30 |
-| lead_id | BIGINT UNSIGNED | да | FK → `leads.id`, если из сессии создана заявка |
+| user_agent | VARCHAR(500) | да | |
+| messages_count | INT UNSIGNED | нет | По умолчанию 0. Считаются все сообщения сессии. Лимит 30 — только роль `user` |
+| lead_id | BIGINT UNSIGNED | да | FK → `leads.id`, `nullOnDelete` |
+| utm_source | VARCHAR(190) | да | Из cookie `nadia_ft` |
+| utm_medium | VARCHAR(190) | да | |
+| utm_campaign | VARCHAR(190) | да | |
+| referrer | VARCHAR(500) | да | |
+| landing_path | VARCHAR(500) | да | |
 | last_message_at | TIMESTAMP | да | |
 | created_at | TIMESTAMP | нет | |
 | updated_at | TIMESTAMP | нет | |
@@ -75,19 +81,21 @@ Email не уникален: повторные заявки сохраняют�
 | Колонка | Тип | NULL | Примечание |
 | --- | --- | --- | --- |
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
-| chat_session_id | BIGINT UNSIGNED | нет | FK → `chat_sessions.id` |
-| role | VARCHAR(16) | нет | `user` или `assistant` |
+| chat_session_id | BIGINT UNSIGNED | нет | FK → `chat_sessions.id`, cascade |
+| role | VARCHAR(10) | нет | `user` или `assistant` |
 | content | TEXT | нет | У ответа ассистента уже без блока `<lead>` |
-| provider | VARCHAR(64) | да | Для ответа ассистента |
-| model | VARCHAR(128) | да | Для ответа ассистента |
+| provider | VARCHAR(20) | да | Для ответа ассистента |
+| model | VARCHAR(100) | да | Для ответа ассистента |
 | tokens_in | INT UNSIGNED | да | |
 | tokens_out | INT UNSIGNED | да | |
+| latency_ms | INT UNSIGNED | да | |
+| error | VARCHAR(500) | да | Короткая причина, без ключа API |
 | created_at | TIMESTAMP | нет | Колонки `updated_at` нет |
 
 Индексы:
 
 - PRIMARY `id`
-- `chat_messages_session_created_index` (`chat_session_id`, `created_at`) — последние 20 сообщений и лента в админке
+- `chat_messages_chat_session_id_id_index` (`chat_session_id`, `id`) — последние сообщения сессии и лента в админке
 
 ## page_views
 
@@ -156,12 +164,16 @@ Email не уникален: повторные заявки сохраняют�
 
 ## site_settings
 
-Ключ–значение. Отдельных timestamps в ТЗ нет.
+Ключ–значение.
 
 | Колонка | Тип | NULL | Примечание |
 | --- | --- | --- | --- |
-| key | VARCHAR(191) | нет | PK |
+| key | VARCHAR(100) | нет | PK |
 | value | LONGTEXT | да | |
+| created_at | TIMESTAMP | нет | |
+| updated_at | TIMESTAMP | нет | |
+
+`App\Support\Settings` читает значение из cache store и сбрасывает ключ при `set`. Миграция ставит `chat_enabled=1`, приветствие и черновик system prompt, если таблицы ещё нет. Пустой ключ в коде не затирает уже сохранённое значение: вставка только при создании таблицы.
 
 Ключи:
 
