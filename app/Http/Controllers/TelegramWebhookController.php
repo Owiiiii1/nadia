@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\TelegramBotSetting;
+use App\Services\Telegram\TelegramUpdates;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -30,7 +31,8 @@ class TelegramWebhookController extends Controller
                 return response()->json(['ok' => false, 'error' => 'Forbidden.'], Response::HTTP_FORBIDDEN);
             }
 
-            // Minimal acknowledge handler — extend with Nutgram handlers as needed.
+            app(TelegramUpdates::class)->handle($request->all(), (string) $setting->bot_token);
+
             return response()->json(['ok' => true]);
         } catch (\Throwable) {
             return response()->json(['ok' => false, 'error' => 'Webhook unavailable.'], Response::HTTP_SERVICE_UNAVAILABLE);

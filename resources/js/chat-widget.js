@@ -134,7 +134,13 @@ function mount() {
     const send = el('button', 'nadia-chat-send');
     send.type = 'submit';
     send.textContent = 'Send';
-    form.append(field, send);
+    const privacy = el('p', 'nadia-chat-privacy');
+    privacy.append('By submitting, you agree to the ');
+    const privacyLink = document.createElement('a');
+    privacyLink.href = '/privacy';
+    privacyLink.textContent = 'Privacy Policy';
+    privacy.append(privacyLink, '.');
+    form.append(field, send, privacy);
     panel.append(header, log, form);
     root.append(launcher, panel);
     document.body.appendChild(root);

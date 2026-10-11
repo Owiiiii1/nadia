@@ -3,6 +3,7 @@
 namespace App\Console\Commands;
 
 use App\Support\ChatAvailability;
+use App\Support\Settings;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
@@ -38,6 +39,12 @@ class NadiaSmokeCommand extends Command
             'track',
             'analytics.index',
             'tracking.index',
+            'tracking.store',
+            'tracking.update',
+            'tracking.destroy',
+            'tracking.pixels',
+            'privacy',
+            'settings.notifications.update',
             'settings.index',
             'ai-settings.index',
             'statistics.logs',
@@ -65,7 +72,7 @@ class NadiaSmokeCommand extends Command
             $ok = $this->mark(! Schema::hasTable($table), "table {$table} absent") && $ok;
         }
 
-        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads', 'chat_sessions', 'chat_messages', 'site_settings', 'page_views', 'site_events'] as $table) {
+        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads', 'chat_sessions', 'chat_messages', 'site_settings', 'page_views', 'site_events', 'tracking_codes'] as $table) {
             $ok = $this->mark(Schema::hasTable($table), "table {$table} present") && $ok;
         }
 
@@ -112,8 +119,25 @@ class NadiaSmokeCommand extends Command
         $ok = $this->mark($prune, 'schedule contains analytics:prune') && $ok;
 
         $this->line('· '.$chatLine);
+        $this->line('· '.$this->notificationLine());
 
         return $ok ? self::SUCCESS : self::FAILURE;
+    }
+
+    private function notificationLine(): string
+    {
+        try {
+            $settings = app(Settings::class);
+            $telegram = $settings->boolean('notify_telegram_enabled', false) ? 'on' : 'off';
+            $email = $settings->boolean('notify_email_enabled', false) ? 'on' : 'off';
+            $telegramCount = count(json_decode((string) $settings->get('notify_telegram_recipients', '[]'), true) ?: []);
+            $emailCount = count(json_decode((string) $settings->get('notify_email_recipients', '[]'), true) ?: []);
+            $mailer = (string) config('mail.default');
+
+            return "notifications: telegram {$telegram} ({$telegramCount} recipients), email {$email} ({$emailCount} recipients), mail transport: {$mailer}";
+        } catch (\Throwable) {
+            return 'notifications: telegram off (0 recipients), email off (0 recipients), mail transport: '.config('mail.default');
+        }
     }
 
     private function mark(bool $pass, string $label): bool

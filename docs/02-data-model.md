@@ -152,11 +152,11 @@ Email не уникален: повторные заявки сохраняют�
 | Колонка | Тип | NULL | Примечание |
 | --- | --- | --- | --- |
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
-| name | VARCHAR(255) | нет | |
-| placement | VARCHAR(16) | нет | `head`, `body_start`, `body_end` |
-| code | TEXT | нет | Вставляется как есть только в layout лендинга |
+| name | VARCHAR(120) | нет | |
+| placement | VARCHAR(20) | нет | `head`, `body_start`, `body_end` |
+| code | LONGTEXT | нет | Вставляется как есть на `/` и `/privacy`. Лимит формы 20 000 символов |
 | is_active | TINYINT(1) | нет | По умолчанию 1 |
-| sort | INT | нет | По умолчанию 0. Меньше — раньше |
+| sort | SMALLINT UNSIGNED | нет | По умолчанию 0. Меньше — раньше |
 | created_at | TIMESTAMP | нет | |
 | updated_at | TIMESTAMP | нет | |
 
@@ -182,9 +182,14 @@ Email не уникален: повторные заявки сохраняют�
 | assistant_system_prompt | System prompt ассистента |
 | assistant_greeting | Приветствие в виджете |
 | chat_enabled | Чат включён |
-| meta_pixel_id | Meta Pixel ID |
-| ga4_id | GA4 Measurement ID |
-| lead_notify_* | Префикс зарезервирован под канал уведомлений о заявке. Конкретные ключи — после решения в открытых вопросах |
+| meta_pixel_id | Meta Pixel ID, только цифры |
+| ga4_measurement_id | GA4 Measurement ID, формат `G-…` |
+| notify_telegram_enabled | Канал Telegram включён |
+| notify_email_enabled | Канал email включён |
+| notify_telegram_recipients | JSON-массив `{chat_id, name, username}` |
+| notify_email_recipients | JSON-массив email, не больше 5 |
+| notify_last_error_telegram | Последняя ошибка канала и время, без текста заявки |
+| notify_last_error_email | Последняя ошибка почты и время, без текста заявки |
 
 ## Связи
 

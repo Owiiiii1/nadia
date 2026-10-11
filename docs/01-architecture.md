@@ -27,14 +27,14 @@ flowchart LR
   landing --> settings
 ```
 
-Лендинг — Blade и vanilla JS, отдельные входные точки Vite `resources/css/landing.css` и `resources/js/landing.js`. В этот бандл не входят React и Inertia. Админка — React/JSX через Inertia. Пиксели и маячок только на лендинге, через пустые `@stack` (`head_codes`, `body_start_codes`, `body_end_codes`); шаг 7 их заполнит.
+Лендинг — Blade и vanilla JS, отдельные входные точки Vite `resources/css/landing.css` и `resources/js/landing.js`. В этот бандл не входят React и Inertia. Админка — React/JSX через Inertia. Пиксели и маячок стоят на `/` и `/privacy`. Админка их не выводит.
 
 ## Публичные роуты
 
 | Метод | Путь | Назначение |
 | --- | --- | --- |
 | GET | `/` | Лендинг |
-| GET | `/privacy` | Текст политики. Делается на шаге 7, ссылка в футере лендинга. Баннера согласия нет |
+| GET | `/privacy` | Текст политики на английском. Ссылка в футере лендинга и под формой. Баннера согласия нет |
 | POST | `/leads` | Заявка с формы |
 | POST | `/chat/message` | Сообщение ассистенту |
 | POST | `/t` | Маячок аналитики (`sendBeacon`) |
@@ -51,8 +51,8 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 2. Leads — `leads.index` `GET /leads`, `leads.show` `GET /leads/{lead}`, `leads.update` `PATCH /leads/{lead}`, `leads.destroy` `DELETE /leads/{lead}`, `leads.export` `GET /leads/export.csv`. В меню бейдж `status=new`. Публичная запись — `leads.store` `POST /leads` (throttle `leads`, 5/мин по IP), вне auth.
 3. Chats — `chats.index` `GET /chats`, `chats.show` `GET /chats/{session}`, `chats.destroy` `DELETE /chats/{session}`. Список по 25, фильтр «только с заявкой» и период как у заявок.
 4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics`. Периоды Today / 7d / 30d (по умолчанию) / 90d / Custom. Logs — `statistics.logs`, `GET /statistics/logs`.
-5. Pixels & codes — `tracking.index`, `GET /tracking-codes`. Заглушка шага 7.
-6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`), Telegram. Assistant сохраняется через `settings.assistant.update` (`PUT /settings/assistant`) и `settings.assistant.reset` (`POST /settings/assistant/reset`).
+5. Pixels & codes — `tracking.index` `GET /tracking-codes`, `tracking.store`, `tracking.update`, `tracking.destroy`, `tracking.pixels`. Quick setup для Pixel/GA4 и свои сниппеты.
+6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`), Telegram, Notifications (`?tab=notifications`). Assistant сохраняется через `settings.assistant.update` и `settings.assistant.reset`. Уведомления — `settings.notifications.update`. Вкладка Telegram по-прежнему подключает бота.
 
 Рядом остаются Auth, Profile (`profile.edit`), `GET /ai-settings` (редирект кита на вкладку AI), `GET /owl-admin/health`, `POST /telegram/webhook`. `GET /app-settings` (`app-settings.index`) оставлен только потому, что smoke кита ищет это имя: редирект на `/settings` без вкладки App. Вкладки App в настройках нет.
 
@@ -102,7 +102,9 @@ CRM-модули Customers, Orders, Services, Staff, Calendar из прилож�
 
 ## Пиксели
 
-`tracking_codes` и ID из `site_settings` (`meta_pixel_id`, `ga4_id`) подключаются только в layout лендинга, в местах `head`, `body_start`, `body_end`. Layout админки их не выводит.
+`tracking_codes` и ID из `site_settings` (`meta_pixel_id`, `ga4_measurement_id`) выводятся на `/` и `/privacy` через `App\Support\TrackingCodes`: head, начало body, конец body, в порядке `sort`. Сниппет вставляется как есть. Залогиненному админу пиксели, сниппеты и `tracker.js` не отдаются. Layout админки их не содержит. `nadia:lead` и `nadia:chat_lead` вызывают `fbq('track','Lead')` и `gtag('event','generate_lead')`, если эти функции уже есть на странице.
+
+Новая заявка (`LeadCreated`, не spam и не повторный блок в чате) уходит в Telegram и на почту после ответа клиенту, если канал включён на вкладке Notifications. Ошибка одного канала не останавливает второй.
 
 ## Появление Laravel в этом репозитории
 

@@ -4,6 +4,8 @@ use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ChatSessionController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
+use App\Http\Controllers\Settings\NotificationSettingsController;
+use App\Http\Controllers\TrackingCodeController;
 use App\Http\Controllers\Settings\AssistantSettingsController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\TelegramWebhookController;
@@ -45,11 +47,18 @@ Route::middleware(AdminRouteMiddleware::stack())->group(function () {
 
     Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
-    Route::get('/tracking-codes', function () {
-        return Inertia::render('Tracking/Index');
-    })->name('tracking.index');
+    Route::get('/tracking-codes', [TrackingCodeController::class, 'index'])->name('tracking.index');
+    Route::post('/tracking-codes', [TrackingCodeController::class, 'store'])->name('tracking.store');
+    Route::put('/tracking-codes/pixels', [TrackingCodeController::class, 'updatePixels'])->name('tracking.pixels');
+    Route::patch('/tracking-codes/{trackingCode}', [TrackingCodeController::class, 'update'])->name('tracking.update');
+    Route::delete('/tracking-codes/{trackingCode}', [TrackingCodeController::class, 'destroy'])->name('tracking.destroy');
 
     Route::get('/settings', [SettingsController::class, 'index'])->name('settings.index');
+    Route::put('/settings/notifications', [NotificationSettingsController::class, 'update'])->name('settings.notifications.update');
+    Route::post('/settings/notifications/telegram/connect', [NotificationSettingsController::class, 'connect'])->name('settings.notifications.telegram.connect');
+    Route::delete('/settings/notifications/telegram', [NotificationSettingsController::class, 'remove'])->name('settings.notifications.telegram.remove');
+    Route::post('/settings/notifications/telegram/test', [NotificationSettingsController::class, 'testTelegram'])->name('settings.notifications.telegram.test');
+    Route::post('/settings/notifications/email/test', [NotificationSettingsController::class, 'testEmail'])->name('settings.notifications.email.test');
     Route::post('/settings/language', [SettingsController::class, 'updateLanguage'])->name('settings.language.update');
     Route::post('/settings/users', [SettingsUserController::class, 'store'])->name('settings.users.store');
     Route::patch('/settings/users/{user}', [SettingsUserController::class, 'update'])->name('settings.users.update');

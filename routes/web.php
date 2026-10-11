@@ -4,11 +4,22 @@ use App\Http\Controllers\ChatController;
 use App\Http\Controllers\LandingController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\TrackController;
+use App\Support\ChatAvailability;
 use Illuminate\Foundation\Http\Middleware\PreventRequestForgery;
 use Illuminate\Foundation\Http\Middleware\ValidateCsrfToken;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', [LandingController::class, 'show'])->name('landing');
+Route::get('/privacy', function (ChatAvailability $chat) {
+    $available = $chat->available();
+
+    return view('privacy', [
+        'chatAvailable' => $available,
+        'chatGreeting' => $available ? $chat->greeting() : '',
+        'navBase' => '/',
+        'homeHref' => '/',
+    ]);
+})->name('privacy');
 Route::post('/leads', [LeadController::class, 'store'])
     ->middleware('throttle:leads')
     ->name('leads.store');

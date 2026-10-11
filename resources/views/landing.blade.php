@@ -10,24 +10,15 @@
   <meta property="og:description" content="Chicago real estate, handled strategically. Nadia Glavin helps buyers, sellers, and investors navigate Chicago real estate with confidence." />
   <meta property="og:type" content="website" />
   <meta name="csrf-token" content="{{ csrf_token() }}" />
-  @vite(['resources/css/landing.css', 'resources/js/landing.js', 'resources/js/tracker.js'])
-  @stack('head_codes')
+  @vite(['resources/css/landing.css', 'resources/js/landing.js'])
+  @unless (auth()->check())
+    @vite(['resources/js/tracker.js'])
+  @endunless
+  @include('partials.tracking', ['placement' => 'head'])
 </head>
 <body>
-  @stack('body_start_codes')
-  <header class="nav">
-    <div class="wrap nav-inner">
-      <a class="brand" href="#top">Nadia Glavin<small>Chicago Real Estate</small></a>
-      <nav class="nav-links">
-        <a href="#sell">Sell</a>
-        <a href="#buy">Buy</a>
-        <a href="#invest">Invest</a>
-        <a href="#about">About</a>
-        <a href="#bruno">Bruno</a>
-        <a class="btn btn-dark" href="#contact">Book a consultation</a>
-      </nav>
-    </div>
-  </header>
+  @include('partials.tracking', ['placement' => 'body_start'])
+  @include('partials.site-header')
 
   <main id="top">
     <section class="wrap hero">
@@ -210,19 +201,15 @@
           <textarea id="message" name="message" rows="3" maxlength="2000">{{ old('message') }}</textarea>
           @error('message')<span class="field-error">{{ $message }}</span>@enderror
           <button class="btn btn-dark" type="submit">Start the conversation</button>
+          <p class="fine-print">By submitting, you agree to the <a href="{{ route('privacy') }}">Privacy Policy</a>.</p>
         </form>
         @endif
       </div>
     </section>
   </main>
 
-  <footer>
-    <div class="wrap footer-inner">
-      <div><strong>Nadia Glavin, REALTOR®</strong><br/>Keller Williams ONEChicago · Chicago, Illinois</div>
-      <div>Equal Housing Opportunity · Add brokerage-required license, office, privacy, and legal disclosures before publishing.</div>
-    </div>
-  </footer>
-  @stack('body_end_codes')
+  @include('partials.site-footer')
+  @include('partials.tracking', ['placement' => 'body_end'])
   @if ($chatAvailable)
     <script type="application/json" id="nadia-chat-boot">@json(['greeting' => $chatGreeting])</script>
     @vite(['resources/css/chat-widget.css', 'resources/js/chat-widget.js'])

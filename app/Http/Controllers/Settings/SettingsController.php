@@ -3,9 +3,10 @@
 namespace App\Http\Controllers\Settings;
 
 use App\Http\Controllers\Controller;
-use App\Http\Controllers\Settings\AssistantSettingsController;
 use App\Models\TelegramBotSetting;
 use App\Models\User;
+use App\Services\Notifications\LeadNotifier;
+use App\Services\Telegram\TelegramUpdates;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Schema;
@@ -27,7 +28,7 @@ class SettingsController extends Controller
             ])
             ->all();
 
-        $allowedTabs = ['general', 'users', 'ai', 'assistant', 'telegram'];
+        $allowedTabs = ['general', 'users', 'ai', 'assistant', 'telegram', 'notifications'];
         $tab = (string) $request->query('tab', 'general');
         if (! in_array($tab, $allowedTabs, true)) {
             $tab = 'general';
@@ -41,6 +42,7 @@ class SettingsController extends Controller
             'providers' => $aiSettings->providersPayload(),
             'telegram' => $this->telegramPayload(),
             'assistant' => app(AssistantSettingsController::class)->payload(),
+            'notifications' => $this->notificationsPayload($request),
             'tab' => $tab,
         ]);
     }
@@ -100,6 +102,42 @@ class SettingsController extends Controller
         } catch (\Throwable) {
             return $empty;
         }
+    }
+
+    /**
+     * @return array<string, mixed>
+     */
+    private function notificationsPayload(Request $request): array
+    {
+        $settings = app(\App\Support\Settings::class);
+        $notifier = app(LeadNotifier::class);
+        $telegram = app(TelegramUpdates::class);
+        $bot = null;
+
+        try {
+            if (class_exists(TelegramBotSetting::class) && Schema::hasTable('telegram_bot_settings')) {
+                $bot = TelegramBotSetting::query()->first();
+            }
+        } catch (\Throwable) {
+            $bot = null;
+        }
+
+        $emails = json_decode((string) $settings->get('notify_email_recipients', '[]'), true);
+
+        return [
+            'telegram_enabled' => $settings->boolean('notify_telegram_enabled', false),
+            'email_enabled' => $settings->boolean('notify_email_enabled', false),
+            'bot_connected' => $bot !== null && (bool) $bot->is_connected && filled($bot->bot_username),
+            'bot_username' => $bot?->bot_username,
+            'recipients' => $telegram->recipients(),
+            'emails' => is_array($emails) ? array_values($emails) : [],
+            'telegram_error' => $settings->get('notify_last_error_telegram'),
+            'email_error' => $settings->get('notify_last_error_email'),
+            'mail_configured' => $notifier->mailConfigured(),
+            'bind_code' => $request->session()->get('telegram_bind_code'),
+            'bind_username' => $request->session()->get('telegram_bind_username'),
+            'test_notice' => $request->session()->get('notify_test'),
+        ];
     }
 
     private function maskSecret(?string $value): ?string

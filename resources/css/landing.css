@@ -156,3 +156,10 @@
     .hp{position:absolute;left:-10000px;width:1px;height:1px;overflow:hidden}
     .lead-success{font-family:Georgia,"Times New Roman",serif;font-size:28px;line-height:1.25;margin:0}
     .lead-banner{margin:0 0 12px;font-size:14px;color:#9b2c2c}
+    .fine-print{margin:10px 0 0;font-size:12px;color:var(--muted)}
+    .fine-print a,.footer-inner a{color:inherit;text-decoration:underline}
+    .privacy{padding:48px 0 72px}
+    .privacy h1{font-size:42px;margin:0 0 12px}
+    .privacy h2{font-size:22px;margin:28px 0 8px}
+    .privacy p,.privacy li{color:var(--muted);line-height:1.6}
+    .privacy code{font-size:13px}

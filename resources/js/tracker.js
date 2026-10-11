@@ -114,6 +114,7 @@ if (navigator.webdriver !== true) {
             event: 'form_submit',
             meta: { goal: event.detail?.goal || null },
         });
+        trackConversion('form');
     });
 
     window.addEventListener('nadia:chat_open', () => {
@@ -122,5 +123,24 @@ if (navigator.webdriver !== true) {
 
     window.addEventListener('nadia:chat_lead', () => {
         track({ type: 'event', event: 'chat_lead' });
+        trackConversion('chat');
     });
+}
+
+function trackConversion(method) {
+    try {
+        if (typeof window.fbq === 'function') {
+            window.fbq('track', 'Lead', { content_name: method });
+        }
+    } catch {
+        // A missing or broken pixel must not break the page.
+    }
+
+    try {
+        if (typeof window.gtag === 'function') {
+            window.gtag('event', 'generate_lead', { method });
+        }
+    } catch {
+        // A missing or broken tag must not break the page.
+    }
 }
