@@ -81,6 +81,15 @@ class NotificationTest extends TestCase
         Mail::assertNothingSent();
     }
 
+    public function test_a_webhook_without_the_secret_is_forbidden_when_the_bot_is_configured(): void
+    {
+        $this->bot();
+
+        $this->postJson('/telegram/webhook', $this->update('/start 123456'))
+            ->assertForbidden();
+        $this->assertSame([], app(\App\Services\Telegram\TelegramUpdates::class)->recipients());
+    }
+
     public function test_start_code_saves_a_chat_once(): void
     {
         $bot = $this->bot();

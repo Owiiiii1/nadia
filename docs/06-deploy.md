@@ -1,36 +1,53 @@
 # 06. Деплой
 
-Сервер один: `/var/www/nadia`, ветка `main`. Деплой вручную по SSH под `deploy`.
+Сервер один: `/var/www/nadia`, ветка `main`, пользователь `deploy`.
 
-`.env` на сервере уже заполнен и в git не входит. `vendor/` и `public/build` на сервере собираются заново.
+`.env` на сервере уже заполнен и в git не входит. `vendor/` и `public/build` на сервере собираются заново и в git не входят.
 
-## Команды
+## Команда
 
 Из `/var/www/nadia`:
 
 ```bash
-git pull
-composer install --no-dev --optimize-autoloader
-php artisan migrate --force
-npm ci && npm run build
-php artisan optimize
-sudo systemctl reload php8.5-fpm
-php artisan nadia:smoke
+deploy/scripts/deploy.sh
 ```
 
-Проверка после деплоя — `php artisan nadia:smoke`. Код 0 значит, что каркас админки на месте: нужные роуты есть, CRM-роутов и таблиц нет, Vite-манифест содержит новые страницы. `owl-admin:smoke` кита по-прежнему ждёт модули Customers/Orders/Services/Staff/Calendar и после шага 3 не используется.
+Скрипт пишет вывод в `storage/logs/deploy-YYYYMMDD-HHMMSS.log` и останавливается на первой ошибке (`set -euo pipefail`).
 
-`git pull` — fast-forward `main`. Если история разошлась, деплой останавливается, force pull не делается.
+Что он делает:
 
-`composer install --no-dev` ставит зависимости ровно по lock-файлу. `npm ci` так же по lock-файлу, затем production-сборка Vite кита. Лендинг — Blade и vanilla JS, отдельной сборки не требует; `npm run build` нужен админке.
+1. Отказывается, если пользователь не `deploy`, ветка не `main` или рабочее дерево не чистое.
+2. `git pull --ff-only`.
+3. `composer install --no-dev --optimize-autoloader --no-interaction`.
+4. `npm ci && npm run build`.
+5. Если `php artisan migrate:status` показывает `Pending`, включает `php artisan down --retry=15`. Ошибка после `down` снимает режим обслуживания и выходит с кодом 1.
+6. `php artisan migrate --force`, затем `php artisan up`, если обслуживание включалось.
+7. `php artisan optimize:clear && php artisan optimize`.
+8. `sudo systemctl reload php8.5-fpm`.
+9. `php artisan nadia:smoke`.
 
-`php artisan optimize` собирает кэши конфигурации, маршрутов и представлений. После смены `.env` кэш конфигурации нужно сбросить и собрать снова.
+`git pull` — только fast-forward. Force pull не делается.
 
-Сервис FPM — `php8.5-fpm`, сокет `/run/php/php8.5-fpm.sock`.
+`nadia:smoke` с кодом 0 — проверка каркаса. `owl-admin:smoke` кита ждёт модули CRM и не используется.
+
+## Тесты после деплоя
+
+`composer install --no-dev` не ставит PHPUnit. Чтобы прогнать тесты на сервере и вернуть прод к тем же пакетам:
+
+```bash
+cd /var/www/nadia
+composer install --optimize-autoloader --no-interaction
+./vendor/bin/phpunit
+composer install --no-dev --optimize-autoloader --no-interaction
+php artisan optimize
+sudo systemctl reload php8.5-fpm
+```
+
+Тесты идут в базу `nadia_test`, не в `nadia`.
 
 ## Права
 
-Каталог `deploy:www-data`, setgid `2775` на корне. После `git pull` новые файлы должны наследовать группу `www-data`. `storage` и `bootstrap/cache` доступны на запись пользователю PHP-FPM (`www-data`).
+Каталог `deploy:www-data`, setgid `2775` на корне. После `git pull` новые файлы наследуют группу `www-data`. `storage` и `bootstrap/cache` доступны на запись пользователю PHP-FPM (`www-data`).
 
 ## Что не входит в деплой
 
@@ -38,5 +55,4 @@ php artisan nadia:smoke
 - `composer update`.
 - Копирование `.env` из репозитория.
 - Перезапуск MySQL.
-
-Первый выклад на шаге 2 отличается тем, что код появляется через `composer create-project` во временный каталог, а не через `git pull`. Схема выше — для последующих обновлений, когда приложение уже в `main`.
+- Настройка Telegram и SMTP.

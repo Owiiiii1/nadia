@@ -9,3 +9,4 @@ Artisan::command('inspire', function () {
 })->purpose('Display an inspiring quote');
 
 Schedule::command('analytics:prune')->dailyAt('04:00')->timezone('UTC');
+Schedule::command('logs:prune')->dailyAt('04:10')->timezone('UTC');

@@ -57,9 +57,13 @@ class NadiaSmokeCommand extends Command
 
         $names = collect(Route::getRoutes())->map(fn ($route) => $route->getName())->filter();
 
-        foreach (['customers.', 'orders.', 'services.', 'staff.', 'calendar.'] as $prefix) {
+        foreach (['customers.', 'orders.', 'services.', 'staff.', 'calendar.', 'storage.local'] as $prefix) {
             $found = $names->contains(fn ($name) => str_starts_with((string) $name, $prefix));
             $ok = $this->mark(! $found, "no routes {$prefix}*") && $ok;
+        }
+
+        foreach (['register', 'password.request', 'password.email', 'password.reset'] as $closed) {
+            $ok = $this->mark(! Route::has($closed), "route {$closed} absent") && $ok;
         }
 
         $appSettings = $names
@@ -114,9 +118,11 @@ class NadiaSmokeCommand extends Command
         } catch (\Throwable) {
             $chatLine = 'chat available: no (none)';
         }
-        $prune = collect(app(Schedule::class)->events())
-            ->contains(fn ($event) => str_contains((string) $event->command, 'analytics:prune'));
+        $events = collect(app(Schedule::class)->events());
+        $prune = $events->contains(fn ($event) => str_contains((string) $event->command, 'analytics:prune'));
         $ok = $this->mark($prune, 'schedule contains analytics:prune') && $ok;
+        $logs = $events->contains(fn ($event) => str_contains((string) $event->command, 'logs:prune'));
+        $ok = $this->mark($logs, 'schedule contains logs:prune') && $ok;
 
         $this->line('· '.$chatLine);
         $this->line('· '.$this->notificationLine());

@@ -4,7 +4,7 @@
 
 Публичная часть — обычный Blade-лендинг и vanilla JS. Админка — пакет `owlsolutions/custom-admin-kit` v0.5.0 (Inertia, Vite). Домен: `nadia.owlsolutions.net`.
 
-Код приложения на шаге 0 не создаётся. Корень репозитория — будущий корень Laravel-приложения.
+Прод: `https://nadia.owlsolutions.net`. Сдача владельцу: [docs/08-handover.md](docs/08-handover.md). Деплой: `deploy/scripts/deploy.sh` ([docs/06-deploy.md](docs/06-deploy.md)).
 
 ## Документация
 
@@ -18,6 +18,8 @@
 | [docs/05-security.md](docs/05-security.md) | CSRF, throttle, honeypot, ключи, ip_hash, пиксели |
 | [docs/06-deploy.md](docs/06-deploy.md) | Схема деплоя |
 | [docs/07-open-questions.md](docs/07-open-questions.md) | Открытые вопросы |
+| [docs/08-handover.md](docs/08-handover.md) | Сдача: доступы, первые шаги, лимиты |
+| [docs/09-restore.md](docs/09-restore.md) | Восстановление базы и сервера |
 
 Входные материалы (как есть, без правок):
 
