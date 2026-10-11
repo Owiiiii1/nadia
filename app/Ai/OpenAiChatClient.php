@@ -25,13 +25,20 @@ class OpenAiChatClient implements ChatClient
             $payloadMessages[] = ['role' => $role, 'content' => $content];
         }
 
+        $effort = $this->reasoningEffort($this->model);
+        $payload = [
+            'model' => $this->model,
+            'messages' => $payloadMessages,
+            'max_completion_tokens' => $effort === null ? $maxTokens : max($maxTokens, 2000),
+        ];
+
+        if ($effort !== null) {
+            $payload['reasoning_effort'] = $effort;
+        }
+
         $response = ChatHttp::pending()
             ->withToken($this->apiKey)
-            ->post('https://api.openai.com/v1/chat/completions', [
-                'model' => $this->model,
-                'messages' => $payloadMessages,
-                'max_tokens' => $maxTokens,
-            ]);
+            ->post('https://api.openai.com/v1/chat/completions', $payload);
 
         $latency = $this->latency($started);
 
@@ -45,6 +52,21 @@ class OpenAiChatClient implements ChatClient
             $this->intOrNull($response->json('usage.completion_tokens')),
             $latency,
         );
+    }
+
+    private function reasoningEffort(string $model): ?string
+    {
+        $id = strtolower($model);
+
+        if (str_starts_with($id, 'gpt-5')) {
+            return 'minimal';
+        }
+
+        if (str_starts_with($id, 'o1') || str_starts_with($id, 'o3') || str_starts_with($id, 'o4')) {
+            return 'low';
+        }
+
+        return null;
     }
 
     private function latency(int $started): int

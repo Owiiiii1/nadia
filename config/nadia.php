@@ -10,4 +10,10 @@ return [
         'context_messages' => 20,
         'max_output_tokens' => 500,
     ],
+
+    'tracking' => [
+        'per_minute' => 60,
+        'max_bytes' => 4096,
+        'bot_pattern' => 'bot|crawl|spider|slurp|preview|monitor|headless|lighthouse|python|curl|wget|httpclient|facebookexternalhit|embedly',
+    ],
 ];

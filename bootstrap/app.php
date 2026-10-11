@@ -16,6 +16,7 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->encryptCookies(except: [
             'nadia_vid',
             'nadia_ft',
+            'nadia_sid',
         ]);
 
         $middleware->web(append: [
@@ -28,6 +29,10 @@ return Application::configure(basePath: dirname(__DIR__))
         );
 
         $exceptions->render(function (ThrottleRequestsException $e, Request $request) {
+            if ($request->is('t') && $request->isMethod('POST')) {
+                return response()->noContent();
+            }
+
             if ($request->is('leads') && $request->isMethod('POST') && ! $request->expectsJson()) {
                 return redirect('/#contact')->with(
                     'lead_error',

@@ -1,12 +1,11 @@
 <?php
 
-use App\Enums\LeadStatus;
+use App\Http\Controllers\AnalyticsController;
 use App\Http\Controllers\ChatSessionController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LeadController;
 use App\Http\Controllers\Settings\AssistantSettingsController;
 use App\Http\Controllers\ProfileController;
-use App\Models\Lead;
-use Illuminate\Support\Facades\Schema;
 use App\Http\Controllers\TelegramWebhookController;
 use App\Http\Controllers\Settings\AiSettingsController;
 use App\Http\Controllers\Settings\SettingsController;
@@ -30,20 +29,7 @@ Route::post('/telegram/webhook', TelegramWebhookController::class)
     ->name('telegram.webhook');
 
 Route::middleware(AdminRouteMiddleware::stack())->group(function () {
-    Route::get('/dashboard', function () {
-        $leadsCount = 0;
-
-        if (Schema::hasTable('leads')) {
-            $leadsCount = Lead::query()
-                ->where('status', '!=', LeadStatus::Spam->value)
-                ->where('created_at', '>=', now()->subDays(30))
-                ->count();
-        }
-
-        return Inertia::render('Dashboard', [
-            'leadsCount' => $leadsCount,
-        ]);
-    })->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/leads', [LeadController::class, 'index'])->name('leads.index');
     Route::get('/leads/export.csv', [LeadController::class, 'export'])->name('leads.export');
@@ -57,9 +43,7 @@ Route::middleware(AdminRouteMiddleware::stack())->group(function () {
     Route::put('/settings/assistant', [AssistantSettingsController::class, 'update'])->name('settings.assistant.update');
     Route::post('/settings/assistant/reset', [AssistantSettingsController::class, 'reset'])->name('settings.assistant.reset');
 
-    Route::get('/analytics', function () {
-        return Inertia::render('Analytics/Index');
-    })->name('analytics.index');
+    Route::get('/analytics', [AnalyticsController::class, 'index'])->name('analytics.index');
 
     Route::get('/tracking-codes', function () {
         return Inertia::render('Tracking/Index');

@@ -13,6 +13,7 @@ export default defineConfig({
                 'resources/js/app.jsx',
                 'resources/css/landing.css',
                 'resources/js/landing.js',
+                'resources/js/tracker.js',
                 'resources/css/chat-widget.css',
                 'resources/js/chat-widget.js',
             ],

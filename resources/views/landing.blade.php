@@ -10,7 +10,7 @@
   <meta property="og:description" content="Chicago real estate, handled strategically. Nadia Glavin helps buyers, sellers, and investors navigate Chicago real estate with confidence." />
   <meta property="og:type" content="website" />
   <meta name="csrf-token" content="{{ csrf_token() }}" />
-  @vite(['resources/css/landing.css', 'resources/js/landing.js'])
+  @vite(['resources/css/landing.css', 'resources/js/landing.js', 'resources/js/tracker.js'])
   @stack('head_codes')
 </head>
 <body>

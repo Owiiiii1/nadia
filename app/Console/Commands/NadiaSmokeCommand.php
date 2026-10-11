@@ -6,6 +6,7 @@ use App\Support\ChatAvailability;
 use Illuminate\Console\Command;
 use Illuminate\Contracts\Http\Kernel;
 use Illuminate\Http\Request;
+use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Schema;
 
@@ -34,6 +35,7 @@ class NadiaSmokeCommand extends Command
             'chats.show',
             'chats.destroy',
             'chat.message',
+            'track',
             'analytics.index',
             'tracking.index',
             'settings.index',
@@ -63,7 +65,7 @@ class NadiaSmokeCommand extends Command
             $ok = $this->mark(! Schema::hasTable($table), "table {$table} absent") && $ok;
         }
 
-        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads', 'chat_sessions', 'chat_messages', 'site_settings'] as $table) {
+        foreach (['users', 'ai_provider_settings', 'telegram_bot_settings', 'leads', 'chat_sessions', 'chat_messages', 'site_settings', 'page_views', 'site_events'] as $table) {
             $ok = $this->mark(Schema::hasTable($table), "table {$table} present") && $ok;
         }
 
@@ -83,6 +85,7 @@ class NadiaSmokeCommand extends Command
             'resources/js/Pages/Tracking/Index.jsx',
             'resources/js/Pages/Settings/AssistantPanel.jsx',
             'resources/js/landing.js',
+            'resources/js/tracker.js',
             'resources/css/landing.css',
             'resources/js/chat-widget.js',
             'resources/css/chat-widget.css',
@@ -104,6 +107,10 @@ class NadiaSmokeCommand extends Command
         } catch (\Throwable) {
             $chatLine = 'chat available: no (none)';
         }
+        $prune = collect(app(Schedule::class)->events())
+            ->contains(fn ($event) => str_contains((string) $event->command, 'analytics:prune'));
+        $ok = $this->mark($prune, 'schedule contains analytics:prune') && $ok;
+
         $this->line('· '.$chatLine);
 
         return $ok ? self::SUCCESS : self::FAILURE;

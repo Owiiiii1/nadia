@@ -258,7 +258,10 @@ class ChatTest extends TestCase
                 return $request->url() === 'https://api.openai.com/v1/chat/completions'
                     && $request->hasHeader('Authorization', 'Bearer sk-test-openai')
                     && ($data['model'] ?? null) === 'gpt-4o-mini'
-                    && ($data['max_tokens'] ?? null) === 500
+                    && ($data['max_completion_tokens'] ?? null) === 500
+                    && ! array_key_exists('max_tokens', $data)
+                    && ! array_key_exists('temperature', $data)
+                    && ! array_key_exists('reasoning_effort', $data)
                     && ($data['messages'][0]['role'] ?? null) === 'system'
                     && str_starts_with((string) ($data['messages'][0]['content'] ?? ''), 'You are the virtual assistant')
                     && ! str_contains((string) ($data['messages'][0]['content'] ?? ''), '[DRAFT')
@@ -304,11 +307,103 @@ class ChatTest extends TestCase
                 return str_contains($request->url(), 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent')
                     && str_contains($request->url(), 'key=sk-test-gemini')
                     && ($data['generationConfig']['maxOutputTokens'] ?? null) === 500
+                    && ! array_key_exists('thinkingConfig', $data['generationConfig'] ?? [])
                     && str_starts_with((string) ($data['systemInstruction']['parts'][0]['text'] ?? ''), 'You are the virtual assistant')
                     && ($data['contents'][0]['role'] ?? null) === 'user'
                     && ($data['contents'][0]['parts'][0]['text'] ?? null) === 'Hello';
             },
         );
+    }
+
+    public function test_reasoning_and_thinking_models_send_the_adjusted_limits(): void
+    {
+        $this->assertProviderRequest('openai', 'gpt-4.1-mini', 'sk-test-openai', 'api.openai.com/*', function ($request): bool {
+            $data = $request->data();
+
+            return ($data['max_completion_tokens'] ?? null) === 500
+                && ! array_key_exists('reasoning_effort', $data)
+                && ! array_key_exists('temperature', $data)
+                && ! array_key_exists('max_tokens', $data);
+        });
+
+        Http::fake();
+        $this->assertProviderRequest('openai', 'gpt-5-mini', 'sk-test-openai', 'api.openai.com/*', function ($request): bool {
+            $data = $request->data();
+
+            return ($data['model'] ?? null) === 'gpt-5-mini'
+                && ($data['reasoning_effort'] ?? null) === 'minimal'
+                && ($data['max_completion_tokens'] ?? null) === 2000
+                && ! array_key_exists('temperature', $data);
+        });
+
+        Http::fake();
+        $this->assertProviderRequest('openai', 'o4-mini', 'sk-test-openai', 'api.openai.com/*', function ($request): bool {
+            $data = $request->data();
+
+            return ($data['reasoning_effort'] ?? null) === 'low'
+                && ($data['max_completion_tokens'] ?? null) === 2000
+                && ! array_key_exists('temperature', $data);
+        });
+
+        Http::fake();
+        $this->assertProviderRequest('gemini', 'gemini-2.5-flash', 'sk-test-gemini', 'generativelanguage.googleapis.com/*', function ($request): bool {
+            $data = $request->data();
+
+            return ($data['generationConfig']['maxOutputTokens'] ?? null) === 2000
+                && ($data['generationConfig']['thinkingConfig']['thinkingBudget'] ?? null) === 0;
+        });
+
+        Http::fake();
+        $this->assertProviderRequest('gemini', 'gemini-2.5-pro', 'sk-test-gemini', 'generativelanguage.googleapis.com/*', function ($request): bool {
+            $data = $request->data();
+
+            return ($data['generationConfig']['maxOutputTokens'] ?? null) === 2000
+                && ($data['generationConfig']['thinkingConfig']['thinkingBudget'] ?? null) === 512;
+        });
+
+    }
+
+    public function test_anthropic_concatenates_every_text_block(): void
+    {
+        $this->activate('anthropic', 'claude-haiku-4-5', 'sk-test-anthropic');
+        Http::fake([
+            'api.anthropic.com/*' => Http::response([
+                'content' => [
+                    ['type' => 'text', 'text' => 'Hello '],
+                    ['type' => 'tool_use', 'text' => 'ignore'],
+                    ['type' => 'text', 'text' => 'there'],
+                ],
+                'usage' => ['input_tokens' => 2, 'output_tokens' => 2],
+            ]),
+        ]);
+        $this->postJson('/chat/message', ['message' => 'Hello'])
+            ->assertOk()
+            ->assertJsonPath('reply', 'Hello there');
+        Http::assertSent(function ($request): bool {
+            $data = $request->data();
+
+            return str_contains($request->url(), 'https://api.anthropic.com/v1/messages')
+                && ($data['model'] ?? null) === 'claude-haiku-4-5'
+                && ($data['max_tokens'] ?? null) === 500
+                && $request->hasHeader('anthropic-version', '2023-06-01');
+        });
+    }
+
+    public function test_empty_provider_text_is_stored_as_an_error(): void
+    {
+        $this->activate('openai', 'gpt-4.1-mini', 'sk-test-openai');
+        Http::fake([
+            'api.openai.com/*' => Http::response($this->openaiBody('   ')),
+        ]);
+
+        $this->postJson('/chat/message', ['message' => 'Hello'])
+            ->assertOk()
+            ->assertJsonPath('reply', ChatMessenger::FALLBACK);
+
+        $message = ChatMessage::query()->where('role', 'assistant')->first();
+        $this->assertNotNull($message);
+        $this->assertSame('empty response', $message->error);
+        $this->assertSame(ChatMessenger::FALLBACK, $message->content);
     }
 
     public function test_guest_cannot_open_chats_and_a_member_can_view_and_save_assistant_settings(): void
@@ -365,14 +460,17 @@ class ChatTest extends TestCase
 
     private function activate(string $provider, string $model, string $key): void
     {
-        AiProviderSetting::query()->create([
-            'provider' => $provider,
-            'label' => $provider,
-            'api_key' => $key,
-            'is_connected' => true,
-            'is_active' => true,
-            'active_model' => $model,
-        ]);
+        AiProviderSetting::query()->update(['is_active' => false]);
+        AiProviderSetting::query()->updateOrCreate(
+            ['provider' => $provider],
+            [
+                'label' => $provider,
+                'api_key' => $key,
+                'is_connected' => true,
+                'is_active' => true,
+                'active_model' => $model,
+            ],
+        );
     }
 
     /**

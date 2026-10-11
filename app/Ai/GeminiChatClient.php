@@ -18,6 +18,15 @@ class GeminiChatClient implements ChatClient
             .rawurlencode($this->model)
             .':generateContent';
 
+        $generation = [
+            'maxOutputTokens' => $this->isThinkingModel($this->model) ? 2000 : $maxTokens,
+        ];
+        $budget = $this->thinkingBudget($this->model);
+
+        if ($budget !== null) {
+            $generation['thinkingConfig'] = ['thinkingBudget' => $budget];
+        }
+
         $response = ChatHttp::pending()
             ->withQueryParameters(['key' => $this->apiKey])
             ->post($url, [
@@ -25,9 +34,7 @@ class GeminiChatClient implements ChatClient
                     'parts' => [['text' => $system]],
                 ],
                 'contents' => $this->contents($messages),
-                'generationConfig' => [
-                    'maxOutputTokens' => $maxTokens,
-                ],
+                'generationConfig' => $generation,
             ]);
 
         $latency = (int) ((hrtime(true) - $started) / 1_000_000);
@@ -89,6 +96,30 @@ class GeminiChatClient implements ChatClient
         }
 
         return $out;
+    }
+
+    private function isThinkingModel(string $model): bool
+    {
+        return (bool) preg_match('/gemini-(?:2\.5|3(?:[.\-]|$))/i', $model);
+    }
+
+    private function thinkingBudget(string $model): ?int
+    {
+        if (! $this->isThinkingModel($model)) {
+            return null;
+        }
+
+        $id = strtolower($model);
+
+        if (str_contains($id, 'flash')) {
+            return 0;
+        }
+
+        if (str_contains($id, 'pro')) {
+            return 512;
+        }
+
+        return null;
     }
 
     private function intOrNull(mixed $value): ?int

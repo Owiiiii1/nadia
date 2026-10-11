@@ -90,6 +90,12 @@ class ChatMessenger
             return new ChatTurn($session->uuid, self::FALLBACK, false);
         }
 
+        if (trim($reply->text) === '') {
+            $this->storeAssistant($session, self::FALLBACK, $reply, 'empty response');
+
+            return new ChatTurn($session->uuid, self::FALLBACK, false);
+        }
+
         [$clean, $blocks] = $this->extractLeadMarkup($reply->text);
         $captured = $this->applyLeadBlocks($session, $blocks);
         $this->storeAssistant($session, $clean, $reply, null);

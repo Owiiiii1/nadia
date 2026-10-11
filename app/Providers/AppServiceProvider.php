@@ -29,5 +29,9 @@ class AppServiceProvider extends ServiceProvider
         RateLimiter::for('chat', function (Request $request) {
             return Limit::perMinute((int) config('nadia.chat.per_minute', 20))->by($request->ip());
         });
+
+        RateLimiter::for('track', function (Request $request) {
+            return Limit::perMinute((int) config('nadia.tracking.per_minute', 60))->by($request->ip());
+        });
     }
 }

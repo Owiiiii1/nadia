@@ -39,7 +39,7 @@ flowchart LR
 | POST | `/chat/message` | Сообщение ассистенту |
 | POST | `/t` | Маячок аналитики (`sendBeacon`) |
 
-`POST /leads` и `POST /chat/message` проходят CSRF, валидацию и throttle. На форме дополнительно honeypot. `POST /t` тоже с CSRF-токеном в теле запроса: `sendBeacon` умеет отправить `FormData` с `_token`.
+`POST /leads` и `POST /chat/message` проходят CSRF, валидацию и throttle. На форме дополнительно honeypot. `POST /t` без CSRF: `sendBeacon` шлёт JSON как `text/plain`. Тело больше 4 КБ отбрасывается. Ответ всегда 204, в том числе на отказ и на throttle. Запись принимается, только если host `Origin` (или `Referer`, если `Origin` нет) совпадает с host `APP_URL`.
 
 Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/message` — 20 запросов в минуту, `/t` — 60 запросов в минуту. Числа чата лежат в `config/nadia.php`: 20 запросов в минуту с IP, 30 сообщений пользователя на сессию, 100 сообщений пользователя в сутки на `ip_hash`, 1500 сообщений пользователя в сутки на весь сайт (`nadia.chat.daily_global_limit`), сообщение до 1000 символов, в контекст — последние 20 сообщений, ответ до 500 output tokens.
 
@@ -47,10 +47,10 @@ Throttle по IP: `/leads` — 5 запросов в минуту, `/chat/messag
 
 Фронт — `resources/js`, страницы `resources/js/Pages/**/*.jsx`, каркас `AdminLayout.jsx`. Меню слева, подписи en/ru/uk:
 
-1. Dashboard — `dashboard`, `GET /dashboard`. KPI Leads — заявки за последние 30 дней без spam. Визиты, конверсия и чаты пока «—». События `form_submit`, `chat_open`, `chat_lead` — шаг 6.
+1. Dashboard — `dashboard`, `GET /dashboard`. KPI за последние 30 календарных суток Чикаго: заявки без spam, уникальные посетители, конверсия (заявки / посетители), сессии чата. Под ними график визитов по дням и пять последних заявок.
 2. Leads — `leads.index` `GET /leads`, `leads.show` `GET /leads/{lead}`, `leads.update` `PATCH /leads/{lead}`, `leads.destroy` `DELETE /leads/{lead}`, `leads.export` `GET /leads/export.csv`. В меню бейдж `status=new`. Публичная запись — `leads.store` `POST /leads` (throttle `leads`, 5/мин по IP), вне auth.
 3. Chats — `chats.index` `GET /chats`, `chats.show` `GET /chats/{session}`, `chats.destroy` `DELETE /chats/{session}`. Список по 25, фильтр «только с заявкой» и период как у заявок.
-4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics` (шаг 6); Logs — `statistics.logs`, `GET /statistics/logs`.
+4. Statistics (группа): Analytics — `analytics.index`, `GET /analytics`. Периоды Today / 7d / 30d (по умолчанию) / 90d / Custom. Logs — `statistics.logs`, `GET /statistics/logs`.
 5. Pixels & codes — `tracking.index`, `GET /tracking-codes`. Заглушка шага 7.
 6. Settings — `settings.index`, `GET /settings`. Вкладки: General, Users, AI, Assistant (`?tab=assistant`), Telegram. Assistant сохраняется через `settings.assistant.update` (`PUT /settings/assistant`) и `settings.assistant.reset` (`POST /settings/assistant/reset`).
 
@@ -61,9 +61,9 @@ CRM-модули Customers, Orders, Services, Staff, Calendar из прилож�
 ## Как чат берёт провайдера
 
 1. Лендинг показывает кнопку чата только если в `site_settings` чат включён (`chat_enabled`, по умолчанию да) и в `ai_provider_settings` есть строка с `is_active` и `is_connected`. Решение принимается на сервере при рендере `GET /`. Виджет — отдельные `resources/js/chat-widget.js` и `resources/css/chat-widget.css`, без React.
-2. `POST /chat/message` берёт активную запись `AiProviderSetting`. Ключ читается через cast `encrypted` кита и в логи не пишется. У кита есть только `listModels`: генерации ответа в `AiProviderManager` нет, поэтому запрос делает `App\Ai\ChatClient`. OpenAI — Chat Completions (`max_tokens`), Anthropic — Messages API с заголовком `anthropic-version`, Gemini — `generateContent`. Таймаут 30 секунд, один повтор через 1 секунду на 429 и 5xx.
+2. `POST /chat/message` берёт активную запись `AiProviderSetting`. Ключ читается через cast `encrypted` кита и в логи не пишется. У кита есть только `listModels`: генерации ответа в `AiProviderManager` нет, поэтому запрос делает `App\Ai\ChatClient`. OpenAI — Chat Completions с `max_completion_tokens`; у reasoning-моделей (`gpt-5*`, `o1*`, `o3*`, `o4*`) ещё `reasoning_effort` (`minimal` / `low`), лимит не меньше 2000 и без `temperature`. Anthropic — Messages API с заголовком `anthropic-version`, текст собирается из всех блоков `type=text`. Gemini — `generateContent`; у 2.5/3.x `thinkingBudget` 0 для flash и 512 для pro, `maxOutputTokens` 2000. Таймаут 30 секунд, один повтор через 1 секунду на 429 и 5xx. Пустой текст ответа — ошибка `empty response` и запасной ответ.
 3. В запрос уходят system prompt из `site_settings.assistant_system_prompt` и последние 20 сообщений сессии. Первая строка промпта `[DRAFT — replace with client-approved prompt]` в модель не отправляется. Ответ ограничен 500 output tokens. Если провайдер отвечает ошибкой, посетитель получает запасной текст, а в `chat_messages.error` пишется короткая причина без ключа.
-4. Сессия создаётся на первом сообщении. В неё пишутся `visitor_id` из cookie `nadia_vid`, `ip_hash`, user agent и атрибуция из cookie `nadia_ft` (source, medium, campaign, referrer, landing path). Эти две cookie не шифруются: их ставит JS лендинга. На сессию — не больше 30 сообщений пользователя. Сверх лимита — 429. Суточные потолки: 100 на `ip_hash` и 1500 на сайт.
+4. Сессия создаётся на первом сообщении. В неё пишутся `visitor_id` из cookie `nadia_vid`, `ip_hash`, user agent и атрибуция из cookie `nadia_ft` (source, medium, campaign, referrer, landing path). `nadia_vid`, `nadia_ft` и `nadia_sid` не шифруются: их ставит JS лендинга. На сессию — не больше 30 сообщений пользователя. Сверх лимита — 429. Суточные потолки: 100 на `ip_hash` и 1500 на сайт.
 5. Блоки `<lead>{json}</lead>` и незакрытый хвост `<lead` вырезаются до сохранения и до ответа. JSON: `name`, `email`, `phone`, `goal`, `summary`. Заявка создаётся при непустом `name` и непустом `email` или `phone`, `source=chat`, `message` = summary, ссылки в обе стороны. Повторный блок той же сессии дописывает только пустые поля и не шлёт `LeadCreated`. Невалидный блок игнорируется, в лог пишется warning без персональных данных. Неизвестный `goal` сохраняется как `consult`.
 
 Приветствие (`assistant_greeting`) показывается в виджете первым сообщением. В API и в базу оно не уходит.
@@ -84,14 +84,15 @@ CRM-модули Customers, Orders, Services, Staff, Calendar из прилож�
 
 Маячок стоит только на лендинге.
 
-- Cookie `visitor_id`: first-party, 1 год, `SameSite=Lax`, `Secure`, без `HttpOnly` — маячок читает значение сам. Это не сессия Laravel.
-- Cookie сессии трекинга живёт 30 минут с последней активности. Имя cookie не должно совпадать с cookie сессии Laravel. В БД поле называется `session_id`.
-- `POST /t` передаёт path, referrer, UTM и признаки устройства. Сервер считает `referrer_host`, `ip_hash` и пишет `page_views`.
-- Сырой IP не пишется и не логируется этим запросом.
-- Запрос с User-Agent бота не пишется ни в `page_views`, ни в `site_events`. Колонки `is_bot` нет.
+- Cookie `nadia_vid`: first-party, 1 год, `SameSite=Lax`, `Secure`, без `HttpOnly`. Это не сессия Laravel.
+- Cookie `nadia_sid`: UUID, `Max-Age` 1800, продлевается на каждом просмотре и событии. 30 минут без активности — новая сессия. В БД поле называется `session_id`.
+- `resources/js/tracker.js` — отдельный entry без зависимостей. На загрузке шлёт pageview: `path` = `location.pathname`, UTM из query, referrer только если хост внешний. Слушает `nadia:lead` (`form_submit`), `nadia:chat_open`, `nadia:chat_lead`. Не шлёт, если `navigator.webdriver === true`.
+- Сервер сам разбирает User-Agent (`App\Support\UserAgent`): device, browser, os. `referrer_host` считается из referrer; хост приложения сохраняется как null.
+- В `page_views` нет `ip_hash` и нет сырого IP. `ip_hash` остаётся у заявок и сессий чата.
+- Пустой User-Agent, UA из `nadia.tracking.bot_pattern` и залогиненный админ не пишутся.
 - События `form_submit`, `chat_open`, `chat_lead` пишутся в `site_events`.
-- Строки `page_views` и `site_events` старше 12 месяцев удаляет scheduled command (шаг 6).
-- Группировка по дням идёт по календарным суткам `America/Chicago`. В таблицах время хранится в UTC.
+- `analytics:prune` каждый день в 04:00 UTC удаляет `page_views` и `site_events` старше 12 месяцев.
+- Группировка по дням — календарные сутки `America/Chicago`. Границы суток считает PHP и подставляет в SQL. `CONVERT_TZ` не используется: таблицы таймзон MySQL пустые. Кэш отчёта — 5 минут, ключ включает период.
 
 Админские HTML-ответы маячок не содержат.
 

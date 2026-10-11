@@ -4,7 +4,7 @@
 
 ## Форма и чат
 
-- CSRF Laravel на `POST /leads`, `POST /chat/message` и `POST /t` (токен в теле, для маячка — внутри payload `sendBeacon`).
+- CSRF Laravel на `POST /leads` и `POST /chat/message`. `POST /t` без CSRF, как webhook Telegram: маячок не может приложить токен сессии. Запись только при совпадении host `Origin`/`Referer` с host `APP_URL`, теле не больше 4 КБ и ответе 204.
 - Honeypot на форме заявки: скрытое поле, которое человек не заполняет. Непустое значение — ответ как у обычной формы, заявка не создаётся.
 - Throttle по IP: `POST /leads` — 5 в минуту, `POST /chat/message` — 20 в минуту, `POST /t` — 60 в минуту.
 - Валидация полей до записи. Goal только из списка `sell`, `buy`, `invest`, `consult`. Неизвестный goal в блоке `<lead>` сохраняется как `consult`.
@@ -16,7 +16,7 @@
 
 ## IP
 
-Сырой IP не пишется в `leads`, `chat_sessions`, `page_views`, `site_events` и не кладётся в access-лог приложения. В таблицах только `ip_hash = sha256(ip + '|' + дата UTC + '|' + app.key)`, считает `App\Support\IpHasher`. Запрос бота не создаёт строку аналитики. Отдельный файл соли не используется: дневная смена заложена в дату внутри хэша.
+Сырой IP не пишется в `leads`, `chat_sessions`, `page_views`, `site_events` и не кладётся в access-лог приложения. В `leads` и `chat_sessions` лежит `ip_hash = sha256(ip + '|' + дата UTC + '|' + app.key)`, считает `App\Support\IpHasher`. В аналитике хэша нет. Строка не пишется, если UA пустой или подходит под `nadia.tracking.bot_pattern`, либо если админ залогинен. Свои визиты в цифры не входят. Отдельный файл соли не используется: дневная смена заложена в дату внутри хэша. Сырые строки старше 12 месяцев удаляет `analytics:prune`.
 
 ## Вывод
 

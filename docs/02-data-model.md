@@ -106,17 +106,17 @@ Email не уникален: повторные заявки сохраняют�
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
 | visitor_id | CHAR(36) | да | |
 | session_id | CHAR(36) | да | Сессия трекинга, не сессия Laravel |
-| path | VARCHAR(2048) | нет | |
-| referrer | VARCHAR(2048) | да | |
-| referrer_host | VARCHAR(255) | да | Хост из referrer, для топа |
-| utm_source | VARCHAR(255) | да | |
-| utm_medium | VARCHAR(255) | да | |
-| utm_campaign | VARCHAR(255) | да | |
-| utm_term | VARCHAR(255) | да | |
-| utm_content | VARCHAR(255) | да | |
-| device | VARCHAR(32) | да | |
-| browser | VARCHAR(64) | да | |
-| os | VARCHAR(64) | да | |
+| path | VARCHAR(500) | нет | Только pathname |
+| referrer | VARCHAR(500) | да | |
+| referrer_host | VARCHAR(190) | да | Хост из referrer, для топа |
+| utm_source | VARCHAR(190) | да | |
+| utm_medium | VARCHAR(190) | да | |
+| utm_campaign | VARCHAR(190) | да | |
+| utm_term | VARCHAR(190) | да | |
+| utm_content | VARCHAR(190) | да | |
+| device | VARCHAR(10) | да | `desktop`, `mobile`, `tablet` |
+| browser | VARCHAR(40) | да | |
+| os | VARCHAR(40) | да | |
 | created_at | TIMESTAMP | нет | |
 
 Запросы ботов в эту таблицу не попадают, колонки признака бота нет.
@@ -127,7 +127,7 @@ Email не уникален: повторные заявки сохраняют�
 - `page_views_created_at_index` (`created_at`) — обязателен по ТЗ
 - `page_views_visitor_created_index` (`visitor_id`, `created_at`) — уникальные посетители за период
 - `page_views_session_id_index` (`session_id`)
-- `page_views_referrer_host_created_index` (`referrer_host`, `created_at`)
+- `page_views_referrer_host_index` (`referrer_host`)
 
 ## site_events
 
@@ -136,7 +136,7 @@ Email не уникален: повторные заявки сохраняют�
 | id | BIGINT UNSIGNED AUTO_INCREMENT | нет | PK |
 | visitor_id | CHAR(36) | да | |
 | session_id | CHAR(36) | да | |
-| type | VARCHAR(64) | нет | `form_submit`, `chat_open`, `chat_lead` |
+| type | VARCHAR(30) | нет | `form_submit`, `chat_open`, `chat_lead` |
 | meta | JSON | да | |
 | created_at | TIMESTAMP | нет | |
 
@@ -195,4 +195,4 @@ Email не уникален: повторные заявки сохраняют�
 
 ## ip_hash
 
-`ip_hash = sha256(ip + '|' + дата UTC Y-m-d + '|' + app.key)` в hex. Считает `App\Support\IpHasher`. Сырой IP в `leads` не пишется. Тот же хелпер — для аналитики и чата, когда эти таблицы появятся.
+`ip_hash = sha256(ip + '|' + дата UTC Y-m-d + '|' + app.key)` в hex. Считает `App\Support\IpHasher`. Сырой IP в `leads` и `chat_sessions` не пишется. В `page_views` и `site_events` хэша нет: визиты админа отсекаются сессией, боты — по User-Agent.
