@@ -67,6 +67,28 @@ class TrackTest extends TestCase
         $this->assertSame(0, SiteEvent::query()->count());
     }
 
+    public function test_origin_is_taken_from_the_app_url_host(): void
+    {
+        config(['app.url' => 'https://nadiaglavin.com']);
+
+        $this->call('POST', '/t', [], [], [], $this->server('https://nadiaglavin.com', $this->browser), json_encode([
+            'type' => 'pageview',
+            'visitor_id' => '11111111-1111-4111-8111-111111111111',
+            'session_id' => '22222222-2222-4222-8222-222222222222',
+            'path' => '/from-app-url',
+        ]))->assertNoContent();
+
+        $this->call('POST', '/t', [], [], [], $this->server('https://nadia.owlsolutions.net', $this->browser), json_encode([
+            'type' => 'pageview',
+            'visitor_id' => '11111111-1111-4111-8111-111111111111',
+            'session_id' => '22222222-2222-4222-8222-222222222222',
+            'path' => '/old-host',
+        ]))->assertNoContent();
+
+        $this->assertSame(1, PageView::query()->count());
+        $this->assertSame('/from-app-url', PageView::query()->value('path'));
+    }
+
     public function test_a_signed_in_admin_is_not_counted(): void
     {
         $user = User::factory()->create();

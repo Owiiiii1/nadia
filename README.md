@@ -2,9 +2,9 @@
 
 Сайт-визитка риелтора (Чикаго) и упрощённая админка в одном приложении Laravel 13.
 
-Публичная часть — обычный Blade-лендинг и vanilla JS. Админка — пакет `owlsolutions/custom-admin-kit` v0.5.0 (Inertia, Vite). Домен: `nadia.owlsolutions.net`.
+Публичная часть — обычный Blade-лендинг и vanilla JS. Админка — пакет `owlsolutions/custom-admin-kit` v0.5.0 (Inertia, Vite). Домен: `nadiaglavin.com`.
 
-Прод: `https://nadia.owlsolutions.net`. Сдача владельцу: [docs/08-handover.md](docs/08-handover.md). Деплой: `deploy/scripts/deploy.sh` ([docs/06-deploy.md](docs/06-deploy.md)).
+Прод: `https://nadiaglavin.com`. `www` и `nadia.owlsolutions.net` отдают 301 на этот адрес. Сдача владельцу: [docs/08-handover.md](docs/08-handover.md). Деплой: `deploy/scripts/deploy.sh` ([docs/06-deploy.md](docs/06-deploy.md)).
 
 ## Документация
 

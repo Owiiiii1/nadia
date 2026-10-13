@@ -158,7 +158,7 @@ export default function Login({ status, canResetPassword }) {
                     <button
                         type="submit"
                         disabled={processing}
-                        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-slate-900 px-4 text-sm font-medium text-white transition hover:bg-slate-800 disabled:cursor-not-allowed disabled:opacity-70"
+                        className="inline-flex h-11 w-full items-center justify-center gap-2 rounded-full bg-[#1E4FA3] px-4 text-sm font-medium text-white transition hover:bg-[#183f86] disabled:cursor-not-allowed disabled:opacity-70"
                     >
                         <span>{processing ? t.signingIn : t.signIn}</span>
                         <ArrowRight className="h-4 w-4" />

@@ -109,14 +109,18 @@ function mount() {
     panel.setAttribute('aria-labelledby', 'nadia-chat-title');
 
     const header = el('div', 'nadia-chat-header');
+    const heading = el('div', 'nadia-chat-heading');
     const title = el('h2', 'nadia-chat-title');
     title.id = 'nadia-chat-title';
-    title.textContent = "Nadia's assistant";
+    title.textContent = "Nadia's Assistant";
+    const status = el('p', 'nadia-chat-status');
+    status.textContent = 'Online · Ready to help';
+    heading.append(title, status);
     const close = el('button', 'nadia-chat-close');
     close.type = 'button';
     close.setAttribute('aria-label', 'Close chat');
     close.textContent = '×';
-    header.append(title, close);
+    header.append(heading, close);
 
     const log = el('div', 'nadia-chat-log');
     log.setAttribute('aria-live', 'polite');

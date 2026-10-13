@@ -7,6 +7,30 @@
 @source '../../storage/framework/views/*.php';
 
 @theme {
-    --font-sans: 'Instrument Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
+    --font-sans: 'Inter', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji',
         'Segoe UI Symbol', 'Noto Color Emoji';
+    --font-serif: 'Playfair Display', Georgia, 'Times New Roman', serif;
 }
+
+/* Kit pages hardcode slate and indigo. Map those utilities onto the landing palette. */
+.bg-slate-950 { background-color: #0B1526; }
+.bg-slate-900 { background-color: #0F1B2D; }
+.bg-slate-800 { background-color: #16243a; }
+.bg-slate-50 { background-color: #FAF8F5; }
+.bg-slate-100 { background-color: #EEF3F8; }
+.text-slate-900 { color: #0F1B2D; }
+.text-slate-700 { color: #3E4C61; }
+.text-slate-600, .text-slate-500 { color: #5B6676; }
+.text-slate-400 { color: #7C8796; }
+.text-slate-300 { color: #B3DDF2; }
+.border-slate-100 { border-color: #EEF3F8; }
+.border-slate-200, .border-slate-300 { border-color: #DDE3EA; }
+.bg-indigo-600, .bg-indigo-500 { background-color: #1E4FA3; }
+.bg-indigo-100, .bg-indigo-100\/70 { background-color: #EEF3F8; }
+.border-indigo-200 { border-color: #B3DDF2; }
+.text-indigo-600, .text-indigo-700 { color: #1E4FA3; }
+.ring-slate-200 { --tw-ring-color: #DDE3EA; }
+.hover\:bg-slate-200:hover { background-color: #E4EAF1; }
+.hover\:bg-slate-100:hover { background-color: #EEF3F8; }
+.hover\:bg-indigo-700:hover, .hover\:bg-indigo-600:hover { background-color: #183f86; }
+.focus-visible\:ring-indigo-200:focus-visible { --tw-ring-color: #B3DDF2; }

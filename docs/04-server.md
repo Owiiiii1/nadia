@@ -10,7 +10,7 @@
 | Swap | `/swapfile` 2 ГБ, строка в `/etc/fstab`, `vm.swappiness=10` в `/etc/sysctl.d/99-swap.conf` |
 | ufw | Включён. Входящие: OpenSSH, 80/tcp, 443/tcp |
 | fail2ban | Jail `sshd`, `backend = systemd`, сервис включён. Конфиг пакета: `/etc/fail2ban/jail.d/defaults-debian.conf` |
-| nginx | 1.28.3, `server_tokens off`. Vhost `nadia.owlsolutions.net`, сокет `/run/php/php8.5-fpm.sock`, HTTPS certbot, редирект HTTP → HTTPS |
+| nginx | 1.28.3, `server_tokens off`. Vhost `nadiaglavin.com`, сокет `/run/php/php8.5-fpm.sock`, HTTPS certbot. HTTP, `www` и `nadia.owlsolutions.net` — 301 на `https://nadiaglavin.com` |
 | PHP | 8.5.4 FPM и CLI. Сокет `/run/php/php8.5-fpm.sock`, пул `www`, пользователь `www-data`, `pm=dynamic`, `pm.max_children=10` |
 | PHP ini | FPM и CLI: `upload_max_filesize=20M`, `post_max_size=25M`, `expose_php=Off`. FPM: `memory_limit=256M` |
 | MySQL | 8.4.11, слушает только `127.0.0.1` (3306 и mysqlx 33060). `innodb_buffer_pool_size=512M` в `/etc/mysql/mysql.conf.d/zz-nadia.cnf` |
@@ -46,4 +46,4 @@ Cron `schedule:run` от `www-data`:
 ## Что остаётся
 
 - Пароль БД и пароль админа лежат только на сервере: `/home/deploy/.nadia-db-credentials`, `/home/deploy/.nadia-admin-credentials`, `.env`. В git их нет.
-- Копия vhost после certbot: `deploy/nginx/nadia.owlsolutions.net.conf`.
+- Копия vhost: `deploy/nginx/nadiaglavin.com.conf`. Сертификат `nadia.owlsolutions.net` оставлен для HTTPS-редиректа.

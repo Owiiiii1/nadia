@@ -108,10 +108,12 @@ class NadiaSmokeCommand extends Command
         $request = Request::create('/', 'GET');
         $response = $kernel->handle($request);
         $body = (string) $response->getContent();
+        $canonical = rtrim((string) config('app.url'), '/').'/';
         $landingOk = $response->getStatusCode() === 200
-            && str_contains($body, 'Chicago real estate, handled strategically.');
+            && str_contains($body, 'Chicago real estate, handled strategically.')
+            && str_contains($body, 'rel="canonical" href="'.$canonical.'"');
         $kernel->terminate($request, $response);
-        $ok = $this->mark($landingOk, 'GET / returns the landing headline') && $ok;
+        $ok = $this->mark($landingOk, 'GET / returns the landing headline and APP_URL canonical') && $ok;
 
         try {
             $chatLine = app(ChatAvailability::class)->statusLine();

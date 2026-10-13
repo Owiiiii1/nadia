@@ -53,7 +53,7 @@ Meta Pixel, GA4 и сниппеты подключают `/` и `/privacy`. Layo
 
 Заголовки на ответах, с `always`: `Strict-Transport-Security: max-age=31536000` (без `includeSubDomains`: домен `owlsolutions.net` общий), `X-Frame-Options: SAMEORIGIN`, `X-Content-Type-Options: nosniff`, `Referrer-Policy: strict-origin-when-cross-origin`, `Permissions-Policy: camera=(), microphone=(), geolocation=()`. Тот же набор повторён в `location /build/`, потому что свой `add_header` там не наследует заголовки сервера.
 
-`location ~ /\.(?!well-known).*` и `location ~* \.(env|log|sql|bak|sh)$` — `deny all`. PHP исполняется только `location = /index.php`. Остальные `*.php` — 404. `client_max_body_size 2m`. TLS 1.2 и 1.3 задаёт `/etc/letsencrypt/options-ssl-nginx.conf` (`ssl_protocols TLSv1.2 TLSv1.3`); файл принадлежит Certbot и вручную не правится. Копия vhost в репозитории: `deploy/nginx/nadia.owlsolutions.net.conf`.
+`location ~ /\.(?!well-known).*` и `location ~* \.(env|log|sql|bak|sh)$` — `deny all`. PHP исполняется только `location = /index.php`. Остальные `*.php` — 404. `client_max_body_size 2m`. TLS 1.2 и 1.3 задаёт `/etc/letsencrypt/options-ssl-nginx.conf` (`ssl_protocols TLSv1.2 TLSv1.3`); файл принадлежит Certbot и вручную не правится. Заголовки стоят только на основном блоке `nadiaglavin.com`. `www` и `nadia.owlsolutions.net` отвечают `301` на `https://nadiaglavin.com$request_uri`. Копия vhost в репозитории: `deploy/nginx/nadiaglavin.com.conf`.
 
 ## CSP
 

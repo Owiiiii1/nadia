@@ -39,7 +39,7 @@ php artisan optimize
 2. Клон `main` в `/var/www/nadia`. Секреты не из git: `.env`, `/home/deploy/.nadia-db-credentials`, `/home/deploy/.nadia-admin-credentials`, токен Composer в `~/.config/composer/auth.json`.
 3. Базу `nadia` создать пустой и залить дамп командами выше.
 4. Дальше деплой из [06-deploy.md](06-deploy.md): `deploy/scripts/deploy.sh`.
-5. nginx — `deploy/nginx/nadia.owlsolutions.net.conf`. Сертификат — certbot на `nadia.owlsolutions.net`.
+5. nginx — `deploy/nginx/nadiaglavin.com.conf`. Сертификаты certbot: `nadiaglavin.com` (и `www`) для сайта, `nadia.owlsolutions.net` для HTTPS-редиректа.
 6. Что уже сделано в приложении и что ещё открыто у заказчика — [08-handover.md](08-handover.md) и [03-roadmap.md](03-roadmap.md).
 
 Копия скрипта бэкапа без секретов: `deploy/scripts/nadia-db-backup.sh`. На сервере рабочий файл — `/usr/local/bin/nadia-db-backup.sh`.

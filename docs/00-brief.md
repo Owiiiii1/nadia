@@ -13,7 +13,7 @@
 - MySQL
 - PHP 8.5-FPM из архива Ubuntu 26.04, сокет `/run/php/php8.5-fpm.sock`
 - nginx
-- SSL: certbot, домен `nadia.owlsolutions.net`
+- SSL: certbot. Боевой домен `nadiaglavin.com`. `nadia.owlsolutions.net` оставлен как редирект.
 
 Корень git-репозитория совпадает с корнем Laravel-приложения. Laravel появляется на шаге 2.
 

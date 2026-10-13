@@ -165,7 +165,7 @@ export default function AdminLayout({ title, children }) {
                     onClick={() => mobile && setMobileMenuOpen(false)}
                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                         active
-                            ? 'border-l-2 border-white bg-white/10 text-white'
+                            ? 'border-l-2 border-[#B3DDF2] bg-white/10 text-white'
                             : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                 >
@@ -191,7 +191,7 @@ export default function AdminLayout({ title, children }) {
                     onClick={() => setOpen((prev) => !prev)}
                     className={`flex w-full items-center justify-between rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                         statisticsActive
-                            ? 'border-l-2 border-white bg-white/10 text-white'
+                            ? 'border-l-2 border-[#B3DDF2] bg-white/10 text-white'
                             : 'text-slate-400 hover:bg-white/5 hover:text-white'
                     }`}
                 >
@@ -242,7 +242,7 @@ export default function AdminLayout({ title, children }) {
             onClick={() => mobile && setMobileMenuOpen(false)}
             className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                 settingsActive
-                    ? 'border-l-2 border-white bg-white/10 text-white'
+                    ? 'border-l-2 border-[#B3DDF2] bg-white/10 text-white'
                     : 'text-slate-400 hover:bg-white/5 hover:text-white'
             }`}
         >
@@ -268,9 +268,9 @@ export default function AdminLayout({ title, children }) {
     );
 
     return (
-        <div className="h-screen overflow-hidden bg-slate-50 text-slate-900">
+        <div className="h-screen overflow-hidden bg-[#FAF8F5] text-[#0F1B2D]">
             <div className="flex h-screen">
-                <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-slate-900 text-white shadow-2xl lg:flex">
+                <aside className="fixed inset-y-0 left-0 hidden w-72 flex-col bg-[#0F1B2D] text-white shadow-2xl lg:flex">
                     <div className="px-6 py-6">
                         <div className="flex items-center gap-3">
                             <img
@@ -295,7 +295,7 @@ export default function AdminLayout({ title, children }) {
                                 href={route('tracking.index')}
                                 className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                                     route().current('tracking.index')
-                                        ? 'border-l-2 border-white bg-white/10 text-white'
+                                        ? 'border-l-2 border-[#B3DDF2] bg-white/10 text-white'
                                         : 'text-slate-400 hover:bg-white/5 hover:text-white'
                                 }`}
                             >
@@ -312,7 +312,7 @@ export default function AdminLayout({ title, children }) {
                 <Sheet open={mobileMenuOpen} onOpenChange={setMobileMenuOpen}>
                     <SheetContent
                         side="left"
-                        className="w-80 border-r-0 bg-slate-900 p-0 text-white data-[side=left]:w-80 data-[side=left]:sm:max-w-80"
+                        className="w-80 border-r-0 bg-[#0F1B2D] p-0 text-white data-[side=left]:w-80 data-[side=left]:sm:max-w-80"
                     >
                         <SheetHeader className="border-b border-white/10 px-6 py-6 text-left">
                             <SheetTitle className="text-base font-semibold text-white">
@@ -332,7 +332,7 @@ export default function AdminLayout({ title, children }) {
                                     onClick={() => setMobileMenuOpen(false)}
                                     className={`flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition ${
                                         route().current('tracking.index')
-                                            ? 'border-l-2 border-white bg-white/10 text-white'
+                                            ? 'border-l-2 border-[#B3DDF2] bg-white/10 text-white'
                                             : 'text-slate-400 hover:bg-white/5 hover:text-white'
                                     }`}
                                 >
@@ -348,7 +348,7 @@ export default function AdminLayout({ title, children }) {
                 </Sheet>
 
                 <div className="flex min-w-0 flex-1 flex-col overflow-hidden lg:pl-72">
-                    <header className="sticky top-0 z-20 border-b border-slate-200 bg-white/80 backdrop-blur-xl">
+                    <header className="sticky top-0 z-20 border-b border-[#DDE3EA] bg-[#FAF8F5]/90 backdrop-blur-xl">
                         <div className="flex h-16 items-center justify-between px-4 sm:px-10">
                             <div className="flex items-center gap-3">
                                 <Button
@@ -361,7 +361,7 @@ export default function AdminLayout({ title, children }) {
                                 >
                                     <Menu className="h-4 w-4" />
                                 </Button>
-                                <div className="text-sm font-semibold uppercase tracking-wide text-slate-700">
+                                <div className="font-serif text-lg font-semibold tracking-tight text-[#0F1B2D]">
                                     {t.adminPanel}
                                 </div>
                             </div>
@@ -411,7 +411,7 @@ export default function AdminLayout({ title, children }) {
                                     <DropdownMenuTrigger asChild>
                                         <button
                                             type="button"
-                                            className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-slate-200 bg-slate-50 text-slate-700 outline-none transition hover:bg-slate-100 focus-visible:ring-2 focus-visible:ring-indigo-200"
+                                            className="inline-flex h-9 w-9 items-center justify-center overflow-hidden rounded-full border border-[#DDE3EA] bg-white text-[#0F1B2D] outline-none transition hover:bg-[#EEF3F8] focus-visible:ring-2 focus-visible:ring-[#B3DDF2]"
                                             aria-label={t.profile}
                                         >
                                             {user?.avatar_path ? (
@@ -453,8 +453,8 @@ export default function AdminLayout({ title, children }) {
                     </header>
 
                     <main className="flex-1 overflow-y-auto p-4 sm:p-10">
-                        <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
-                            <h1 className="text-xl font-semibold text-slate-900">{title}</h1>
+                        <div className="rounded-3xl border border-[#DDE3EA] bg-white p-6 shadow-sm">
+                            <h1 className="font-serif text-3xl font-semibold text-[#0F1B2D]">{title}</h1>
                             <div className="mt-4">{children}</div>
                         </div>
                     </main>

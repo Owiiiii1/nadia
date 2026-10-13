@@ -28,7 +28,7 @@ class AnalyticsTest extends TestCase
         $this->storeView($c, $this->chicago('2026-10-11 00:30:00'), '/contact');
         $this->storeView($c, $this->chicago('2026-10-09 23:59:00'), '/outside');
 
-        Lead::query()->create([
+        $inRange = Lead::query()->create([
             'name' => 'In Range',
             'email' => 'in@example.com',
             'goal' => 'buy',
@@ -36,16 +36,18 @@ class AnalyticsTest extends TestCase
             'status' => 'new',
             'utm_source' => 'google',
             'referrer' => 'https://www.google.com/search',
-            'created_at' => $this->chicago('2026-10-11 00:15:00'),
         ]);
-        Lead::query()->create([
+        $inRange->created_at = $this->chicago('2026-10-11 00:15:00');
+        $inRange->save();
+        $spam = Lead::query()->create([
             'name' => 'Spam',
             'email' => 'spam@example.com',
             'goal' => 'buy',
             'source' => 'form',
             'status' => 'spam',
-            'created_at' => $this->chicago('2026-10-11 00:20:00'),
         ]);
+        $spam->created_at = $this->chicago('2026-10-11 00:20:00');
+        $spam->save();
         SiteEvent::query()->create([
             'visitor_id' => $a,
             'session_id' => (string) Str::uuid(),

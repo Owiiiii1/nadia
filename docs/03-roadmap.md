@@ -58,14 +58,14 @@
 - Создать Laravel 13 во временном каталоге и перенести в `/var/www/nadia` по правилам из [01-architecture.md](01-architecture.md). Не затереть `docs/`, `reference/`, `reports/`, `README.md`, `.git`. Не коммитить `.env`. Скелет Laravel 12 не апгрейдить, а заменить чистым 13.
 - Поставить кит по `reference/admin-kit-install.md` версии v0.5.0. В примере nginx там указан сокет `php8.3-fpm.sock`; на этом сервере сокет `/run/php/php8.5-fpm.sock`. Саму инструкцию не переписывать.
 - База в `.env` — пользователь и БД из шага 1.
-- Выпустить сертификат certbot на `nadia.owlsolutions.net`.
+- Выпустить сертификат certbot. На шаге 2 это был `nadia.owlsolutions.net`; с шага 9 боевой домен — `nadiaglavin.com`, старое имя редиректит.
 - nginx: `root` на `public`, сокет `/run/php/php8.5-fpm.sock`, редирект HTTP → HTTPS.
 - Зафиксировать фактические колонки `ai_provider_settings` в отчёте шага.
 - Права: владелец `deploy:www-data`, setgid на корне уже 2775. На `storage` и `bootstrap/cache` — ACL для `www-data`, как в [04-server.md](04-server.md).
 
 **Приёмка.**
 
-- `https://nadia.owlsolutions.net` открывает Laravel без предупреждения сертификата.
+- Сайт открывается по HTTPS без предупреждения сертификата. С шага 9 это `https://nadiaglavin.com`.
 - Вход в админку кита работает.
 - `owl-admin/health` отвечает успешно.
 - В git нет `.env`, `vendor/`, `node_modules/`.

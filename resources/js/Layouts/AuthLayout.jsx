@@ -6,14 +6,14 @@ export default function AuthLayout({ children }) {
     const logoPath = owlAdmin.logo_path ?? '/images/company-logo.svg';
 
     return (
-        <main className="min-h-screen bg-slate-50 text-slate-900">
+        <main className="min-h-screen bg-[#FAF8F5] text-[#0F1B2D]">
             <div className="grid min-h-screen lg:grid-cols-2">
-                <section className="relative hidden overflow-hidden bg-slate-950 p-10 text-white lg:flex lg:flex-col lg:justify-between">
+                <section className="relative hidden overflow-hidden bg-[#0F1B2D] p-10 text-white lg:flex lg:flex-col lg:justify-between">
                     <div
                         className="absolute inset-0 bg-cover bg-center"
                         style={{ backgroundImage: "url('/images/auth-abstract-bg.svg')" }}
                     />
-                    <div className="absolute inset-0 bg-gradient-to-br from-slate-950/70 via-slate-900/60 to-slate-950/80" />
+                    <div className="absolute inset-0 bg-gradient-to-br from-[#0F1B2D]/80 via-[#1E4FA3]/40 to-[#0F1B2D]/85" />
 
                     <div className="relative z-10 flex items-center gap-3">
                         <img src={logoPath} alt={brandName} className="h-9 w-9 rounded-lg bg-white/10 p-1" />
@@ -21,7 +21,7 @@ export default function AuthLayout({ children }) {
                     </div>
 
                     <div className="relative z-10 max-w-md space-y-4">
-                        <h1 className="text-5xl font-semibold leading-tight">
+                        <h1 className="font-serif text-5xl font-semibold leading-tight">
                             Service admin workspace.
                         </h1>
                         <p className="text-base text-slate-300">
@@ -34,7 +34,7 @@ export default function AuthLayout({ children }) {
                 </section>
 
                 <section className="relative flex items-center justify-center p-6 sm:p-10">
-                    <div className="w-full max-w-md rounded-xl border border-slate-200 bg-white p-8 shadow-sm">
+                    <div className="w-full max-w-md rounded-3xl border border-[#DDE3EA] bg-white p-8 shadow-sm">
                         {children}
                     </div>
                 </section>

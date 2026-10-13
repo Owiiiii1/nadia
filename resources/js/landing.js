@@ -106,12 +106,18 @@ function showBanner(form, message) {
 
 function showThanks(form, name, goal) {
     const box = document.createElement('div');
-    box.className = 'cta-box';
+    box.className = 'lead-thanks';
     box.id = 'lead-thanks';
+    const mark = document.createElement('div');
+    mark.className = 'lead-thanks-mark';
+    mark.textContent = '✓';
+    const copy = document.createElement('div');
+    const heading = document.createElement('h4');
+    heading.textContent = `Thank you, ${name}. I'll be in touch shortly.`;
     const paragraph = document.createElement('p');
-    paragraph.className = 'lead-success';
-    paragraph.textContent = `Thank you, ${name}. I'll be in touch shortly.`;
-    box.append(paragraph);
+    paragraph.textContent = 'Nadia will review your details and send over initial thoughts.';
+    copy.append(heading, paragraph);
+    box.append(mark, copy);
     form.replaceWith(box);
     window.dispatchEvent(new CustomEvent('nadia:lead', { detail: { goal } }));
 }

@@ -1,6 +1,6 @@
 # 08. Сдача
 
-Сайт Nadia Glavin, `https://nadia.owlsolutions.net`, релиз `v1.0.0`.
+Сайт Nadia Glavin, `https://nadiaglavin.com`, релиз `v1.0.0`. `www.nadiaglavin.com` и `nadia.owlsolutions.net` перенаправляют сюда.
 
 ## Что это
 
@@ -17,7 +17,7 @@
 
 | Что | Где |
 | --- | --- |
-| Сайт и админка | `https://nadia.owlsolutions.net`, вход `/login` |
+| Сайт и админка | `https://nadiaglavin.com`, вход `/login` |
 | Email и пароль админа | `/home/deploy/.nadia-admin-credentials` (режим 600) |
 | Креды БД | `/home/deploy/.nadia-db-credentials` (режим 600) |
 | Токен Composer (приватный кит) | `/home/deploy/.config/composer/auth.json` |
@@ -46,7 +46,7 @@
 - Обновление: [06-deploy.md](06-deploy.md), одна команда `deploy/scripts/deploy.sh`.
 - Восстановление базы и сервера с нуля: [09-restore.md](09-restore.md).
 - Дамп каждый день в 03:30 UTC, каталог `/var/backups/nadia`, 14 архивов. Копия только на этом сервере — стоит забирать архив наружу.
-- Внешний мониторинг можно повесить на `https://nadia.owlsolutions.net/up` (ответ 200, без авторизации).
+- Внешний мониторинг можно повесить на `https://nadiaglavin.com/up` (ответ 200, без авторизации).
 
 ## Лимиты чата
 

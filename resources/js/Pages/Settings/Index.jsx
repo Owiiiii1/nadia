@@ -92,7 +92,7 @@ export default function SettingsIndex() {
                                 onClick={() => switchTab(tab.id)}
                                 className={`rounded-lg px-3 py-2 text-sm font-medium transition ${
                                     active
-                                        ? 'bg-indigo-600 text-white shadow-sm'
+                                        ? 'bg-[#1E4FA3] text-white shadow-sm'
                                         : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
                                 }`}
                             >

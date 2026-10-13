@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Nadia Glavin | REALTOR® · Keller Williams ONEChicago</title>
+<!-- Google Fonts: Playfair Display & Inter -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&amp;family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400;1,600&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN with forms & container queries plugins -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration -->
+<script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            'cream-bg': '#FAF8F5',
+            'ice-bg': '#EEF3F8',
+            'navy-ink': '#0F1B2D',
+            'slate-body': '#5B6676',
+            'chicago-blue': '#1E4FA3',
+            'sky-accent': '#B3DDF2',
+            'border-subtle': '#DDE3EA'
+          },
+          fontFamily: {
+            serif: ['"Playfair Display"', 'Georgia', 'serif'],
+            sans: ['"Inter"', '-apple-system', 'BlinkMacSystemFont', 'sans-serif']
+          },
+          borderRadius: {
+            'card': '24px'
+          }
+        }
+      }
+    }
+  </script>
+<!-- Typography & Global Styles -->
+<style data-purpose="typography">
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #0F1B2D;
+      background-color: #FAF8F5;
+      line-height: 1.6;
+    }
+    h1, h2, h3, .font-editorial {
+      font-family: 'Playfair Display', Georgia, serif;
+    }
+  </style>
+<!-- Keyframe Animations for Chat & Visuals -->
+<style data-purpose="animations">
+    @keyframes pulse-subtle {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.85; transform: scale(1.02); }
+    }
+    .animate-subtle-float {
+      animation: pulse-subtle 6s ease-in-out infinite;
+    }
+    .typing-dot {
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+    .typing-dot:nth-child(1) { animation-delay: -0.32s; }
+    .typing-dot:nth-child(2) { animation-delay: -0.16s; }
+    @keyframes typing {
+      0%, 80%, 100% { transform: scale(0); }
+      40% { transform: scale(1.0); }
+    }
+  </style>
+</head>
+<body class="bg-cream-bg text-navy-ink antialiased selection:bg-sky-accent selection:text-navy-ink">
+<!-- BEGIN: StickyHeader -->
+<header class="sticky top-0 z-40 bg-[#FAF8F5]/90 backdrop-blur-md border-b border-border-subtle transition-all duration-300">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12 h-20 flex items-center justify-between">
+<!-- Wordmark Brand -->
+<a class="group flex flex-col justify-center" href="#">
+<span class="font-editorial text-2xl font-bold text-navy-ink tracking-tight group-hover:text-chicago-blue transition-colors">Nadia Glavin</span>
+<span class="text-[10px] tracking-[0.2em] uppercase font-semibold text-slate-body">Chicago Real Estate · KW ONEChicago</span>
+</a>
+<!-- Primary Desktop Nav -->
+<nav aria-label="Main Navigation" class="hidden md:flex items-center space-x-8 text-sm font-medium text-navy-ink/80">
+<a class="hover:text-chicago-blue transition-colors py-1" href="#sellers">Sell</a>
+<a class="hover:text-chicago-blue transition-colors py-1" href="#buyers-investors">Buy</a>
+<a class="hover:text-chicago-blue transition-colors py-1" href="#buyers-investors">Invest</a>
+<a class="hover:text-chicago-blue transition-colors py-1" href="#about">About</a>
+<a class="hover:text-chicago-blue transition-colors py-1 inline-flex items-center gap-1.5" href="#bruno">
+<span>Bruno</span>
+<span class="text-xs">🐾</span>
+</a>
+</nav>
+<!-- Header CTA -->
+<div class="flex items-center">
+<a class="inline-flex items-center justify-center px-6 py-2.5 rounded-full bg-chicago-blue hover:bg-blue-800 text-white font-medium text-sm tracking-wide shadow-sm hover:shadow-md transition-all active:scale-[0.98]" href="#contact">
+          Book a consultation
+        </a>
+</div>
+</div>
+</header>
+<!-- END: StickyHeader -->
+<!-- BEGIN: HeroSection -->
+<section class="relative overflow-hidden pt-12 pb-20 lg:pt-16 lg:pb-28">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-center">
+<!-- Left Hero Text Content -->
+<div class="lg:col-span-7 flex flex-col justify-center pr-0 lg:pr-8">
+<div class="inline-flex items-center gap-2 mb-4">
+<span class="inline-block w-2 h-2 rounded-full bg-chicago-blue"></span>
+<span class="text-xs uppercase font-bold tracking-[0.22em] text-chicago-blue">
+              Nadia Glavin · REALTOR® · Keller Williams ONEChicago
+            </span>
+</div>
+<h1 class="font-editorial text-4xl sm:text-5xl lg:text-[58px] leading-[1.12] text-navy-ink font-semibold tracking-tight mb-6">
+            Chicago real estate, <br class="hidden sm:inline"/>
+<span class="italic font-normal">handled strategically.</span>
+</h1>
+<p class="text-slate-body text-lg sm:text-xl font-normal leading-relaxed max-w-2xl mb-8">
+            For sellers, buyers, and investors who want sharp financial advice, disciplined negotiation, and a real estate experience that feels deeply personal—not transactional.
+          </p>
+<div class="flex flex-wrap items-center gap-4">
+<a class="px-8 py-3.5 rounded-full bg-chicago-blue hover:bg-blue-800 text-white font-medium text-base shadow-sm hover:shadow transition-all" href="#contact">
+              Sell with Nadia
+            </a>
+<a class="px-8 py-3.5 rounded-full border border-chicago-blue text-chicago-blue hover:bg-ice-bg font-medium text-base transition-all" href="#buyers-investors">
+              Explore buying
+            </a>
+</div>
+<!-- Subtle Trust Tag -->
+<div class="mt-10 pt-8 border-t border-border-subtle/80 flex items-center gap-6 text-xs tracking-wider uppercase text-slate-body">
+<span class="flex items-center gap-1.5 font-semibold text-navy-ink">
+<svg class="w-4 h-4 text-chicago-blue" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+              Master's in Finance
+            </span>
+<span class="flex items-center gap-1.5 font-semibold text-navy-ink">
+<svg class="w-4 h-4 text-chicago-blue" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+              Top Producer Mentality
+            </span>
+<span class="flex items-center gap-1.5 font-semibold text-navy-ink">
+<svg class="w-4 h-4 text-chicago-blue" fill="currentColor" viewbox="0 0 20 20"><path clip-rule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" fill-rule="evenodd"></path></svg>
+              Pet &amp; Lifestyle Friendly
+            </span>
+</div>
+</div>
+<!-- Right Hero Visual Showcase -->
+<div class="lg:col-span-5 relative flex justify-center">
+<div class="relative w-full max-w-[460px] bg-white p-3 rounded-[32px] shadow-2xl border border-border-subtle group">
+<!-- Elegant background architectural halo -->
+<div class="absolute inset-0 bg-gradient-to-tr from-sky-accent/30 via-transparent to-ice-bg rounded-[32px] pointer-events-none"></div>
+<div class="overflow-hidden rounded-[26px] bg-[#F4F1EA] aspect-[2/3] relative flex items-center justify-center">
+<!-- Provided Image: Nadia and Bruno -->
+<img alt="Nadia Glavin and Bruno holding model home and key" class="w-full h-full object-cover object-top transform group-hover:scale-[1.02] transition-transform duration-700 ease-out" data-purpose="hero-character-duo-image" src="https://lh3.googleusercontent.com/aida-public/AB6AXuCivTgMnNnNpADF74DKTyAlPu68SuyJ3lQVAxJo17neMEnko3PkI-4QaXgIjBVZoURg0ncrYXDcgr27GMuIjhzGDLguzojNdMl1P8KMOcnBr1w0Em6W9E5aKVM5DE4hb1ys2MFAN8xOQTXtZ9PYWejPQhs1do4vRHiSmWuCE3iC2lLky55IQNl85i8q58hvh4s6iz88ZDURmAYGl5r5AdSsn8wktbxw11e5La9jmKwEwSkPfwkrq46B"/>
+</div>
+<!-- Floating Strategy Pill Badge -->
+<div class="absolute -bottom-6 -left-4 sm:-left-8 right-4 sm:right-auto max-w-[340px] bg-white/95 backdrop-blur-md p-4 rounded-2xl shadow-xl border border-border-subtle z-20">
+<div class="flex items-center gap-2 mb-1.5">
+<span class="h-2 w-2 rounded-full bg-chicago-blue animate-pulse"></span>
+<span class="text-xs font-bold uppercase tracking-wider text-navy-ink">Strategy First</span>
+</div>
+<p class="text-xs text-slate-body font-medium leading-relaxed">
+                Pricing, positioning, negotiation, and execution delivered with precision.
+              </p>
+<!-- Mini Metric Indicators -->
+<div class="mt-3 pt-2.5 border-t border-border-subtle flex items-center justify-between text-[11px] text-navy-ink font-semibold">
+<span>📊 Pricing Model</span>
+<span>✨ Staging</span>
+<span>🛡️ Negotiation</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: HeroSection -->
+<!-- BEGIN: StatsStrip -->
+<section class="border-y border-border-subtle bg-white py-10" data-purpose="metrics-strip">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-4 divide-y md:divide-y-0 md:divide-x divide-border-subtle">
+<div class="flex flex-col items-center md:items-start text-center md:text-left px-4 pt-4 md:pt-0">
+<span class="font-editorial text-3xl lg:text-4xl font-semibold text-navy-ink">Chicago</span>
+<span class="text-xs font-medium text-slate-body uppercase tracking-wider mt-1">Residential real estate expertise</span>
+</div>
+<div class="flex flex-col items-center md:items-start text-center md:text-left px-4 pt-4 md:pt-0">
+<span class="font-editorial text-3xl lg:text-4xl font-semibold text-navy-ink">2019</span>
+<span class="text-xs font-medium text-slate-body uppercase tracking-wider mt-1">Licensed since</span>
+</div>
+<div class="flex flex-col items-center md:items-start text-center md:text-left px-4 pt-4 md:pt-0">
+<span class="font-editorial text-3xl lg:text-4xl font-semibold text-navy-ink">Finance</span>
+<span class="text-xs font-medium text-slate-body uppercase tracking-wider mt-1">Master's degree background</span>
+</div>
+<div class="flex flex-col items-center md:items-start text-center md:text-left px-4 pt-4 md:pt-0">
+<span class="font-editorial text-3xl lg:text-4xl font-semibold text-navy-ink">YPN</span>
+<span class="text-xs font-medium text-slate-body uppercase tracking-wider mt-1">Industry leadership &amp; community</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: StatsStrip -->
+<!-- BEGIN: ForSellersSection -->
+<section class="py-24 bg-ice-bg" data-purpose="sellers-offering" id="sellers">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<!-- Section Header -->
+<div class="max-w-3xl mb-16">
+<span class="text-xs uppercase font-bold tracking-[0.2em] text-chicago-blue block mb-2">For Sellers</span>
+<h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-ink tracking-tight mb-5">
+          Your listing should feel like a launch.
+        </h2>
+<p class="text-slate-body text-base sm:text-lg leading-relaxed">
+          Strategic pricing, intentional design preparation, high-impact editorial exposure, and disciplined negotiation. We don't just put a sign in the lawn—we orchestrate buyer demand.
+        </p>
+</div>
+<!-- 3 Numbered Methodology Cards -->
+<div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+<!-- Card 01 -->
+<div class="bg-white rounded-card p-8 border border-border-subtle shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="text-xs font-bold tracking-widest text-chicago-blue uppercase mb-3">Phase 01</div>
+<h3 class="font-editorial text-2xl font-semibold text-navy-ink mb-3">
+              POSITION — Price with intention.
+            </h3>
+<p class="text-slate-body text-sm leading-relaxed mb-6">
+              Deep comparable micro-market analysis, competitive inventory pacing, and buyer psychological anchoring designed to maximize opening weekend momentum and spark decisive bids.
+            </p>
+</div>
+<div class="pt-4 border-t border-border-subtle/60 flex items-center gap-2 text-xs font-medium text-navy-ink">
+<span class="w-1.5 h-1.5 rounded-full bg-chicago-blue"></span>
+            Micro-market valuation analysis
+          </div>
+</div>
+<!-- Card 02 -->
+<div class="bg-white rounded-card p-8 border border-border-subtle shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="text-xs font-bold tracking-widest text-chicago-blue uppercase mb-3">Phase 02</div>
+<h3 class="font-editorial text-2xl font-semibold text-navy-ink mb-3">
+              PRESENT — Make buyers feel it.
+            </h3>
+<p class="text-slate-body text-sm leading-relaxed mb-6">
+              Editorial staging consultations, high-definition architectural photography, Twilight captures, floor plans, and bespoke narrative marketing targeted at affluent qualified purchasers.
+            </p>
+</div>
+<div class="pt-4 border-t border-border-subtle/60 flex items-center gap-2 text-xs font-medium text-navy-ink">
+<span class="w-1.5 h-1.5 rounded-full bg-chicago-blue"></span>
+            Magazine-caliber visuals &amp; storytelling
+          </div>
+</div>
+<!-- Card 03 -->
+<div class="bg-white rounded-card p-8 border border-border-subtle shadow-sm hover:shadow-md transition-shadow flex flex-col justify-between">
+<div>
+<div class="text-xs font-bold tracking-widest text-chicago-blue uppercase mb-3">Phase 03</div>
+<h3 class="font-editorial text-2xl font-semibold text-navy-ink mb-3">
+              NEGOTIATE — Protect the outcome.
+            </h3>
+<p class="text-slate-body text-sm leading-relaxed mb-6">
+              Tenacious representation from initial counter-offer through appraisal review and attorney review inspection contingencies, ensuring not a single dollar is left vulnerable before closing day.
+            </p>
+</div>
+<div class="pt-4 border-t border-border-subtle/60 flex items-center gap-2 text-xs font-medium text-navy-ink">
+<span class="w-1.5 h-1.5 rounded-full bg-chicago-blue"></span>
+            Fiduciary advocacy through settlement
+          </div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ForSellersSection -->
+<!-- BEGIN: ForBuyersAndInvestorsSection -->
+<section class="py-24 bg-cream-bg" data-purpose="buyers-and-investors" id="buyers-investors">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="max-w-2xl mb-16">
+<span class="text-xs uppercase font-bold tracking-[0.2em] text-chicago-blue block mb-2">For Buyers &amp; Investors</span>
+<h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-ink tracking-tight">
+          Buy the right property—<br/><span class="italic font-normal">not just a property.</span>
+</h2>
+</div>
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 items-stretch">
+<!-- Panel 1: Primary Residence (Light Card) -->
+<article class="bg-white rounded-card p-8 sm:p-12 border border-border-subtle shadow-sm flex flex-col justify-between relative overflow-hidden" data-purpose="primary-residence-card">
+<div class="absolute top-0 right-0 w-32 h-32 bg-sky-accent/20 rounded-bl-full pointer-events-none"></div>
+<div>
+<div class="inline-flex items-center px-3.5 py-1 rounded-full bg-ice-bg text-chicago-blue text-xs font-bold uppercase tracking-wider mb-6">
+              Primary Residence
+            </div>
+<h3 class="font-editorial text-3xl sm:text-4xl font-semibold text-navy-ink mb-4">
+              Homes that fit the life you're actually building.
+            </h3>
+<p class="text-slate-body text-base leading-relaxed mb-6">
+              Finding a sanctuary in Chicago is about more than square footage and finishes. We evaluate neighborhood rhythm, architectural daylight, transit flow, park access for pets, school options, and future capital preservation.
+            </p>
+<ul class="space-y-3 mb-8 text-sm text-navy-ink/90 font-medium">
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-chicago-blue"></span>
+                Bespoke MLS curation &amp; private off-market KW networks
+              </li>
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-chicago-blue"></span>
+                In-depth HOA health &amp; reserve fund auditing for condo buyers
+              </li>
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-chicago-blue"></span>
+                Uncompromising representation during inspection contingencies
+              </li>
+</ul>
+</div>
+<div class="pt-6 border-t border-border-subtle flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-[#FAF8F5] border border-border-subtle text-xs font-medium text-slate-body">Single Family</span>
+<span class="px-3 py-1 rounded-full bg-[#FAF8F5] border border-border-subtle text-xs font-medium text-slate-body">Luxury Condos</span>
+<span class="px-3 py-1 rounded-full bg-[#FAF8F5] border border-border-subtle text-xs font-medium text-slate-body">Historic Greystones</span>
+</div>
+</article>
+<!-- Panel 2: Investment Strategy (Dark Navy Card) -->
+<article class="bg-navy-ink text-white rounded-card p-8 sm:p-12 shadow-2xl flex flex-col justify-between relative overflow-hidden" data-purpose="investment-strategy-card">
+<div class="absolute -bottom-10 -right-10 w-44 h-44 bg-chicago-blue/20 rounded-full blur-2xl pointer-events-none"></div>
+<div>
+<div class="inline-flex items-center px-3.5 py-1 rounded-full bg-chicago-blue/40 text-sky-accent text-xs font-bold uppercase tracking-wider mb-6">
+              Investment Strategy
+            </div>
+<h3 class="font-editorial text-3xl sm:text-4xl font-semibold text-white mb-4">
+              Think like an owner.
+            </h3>
+<p class="text-white/80 text-base leading-relaxed mb-6">
+              Leveraging a Master's degree in Finance, Nadia builds real cash-flow modeling, rental upside forecasting, and neighborhood appreciation metrics for multi-unit buildings and buy-and-hold portfolios.
+            </p>
+<ul class="space-y-3 mb-8 text-sm text-white/90 font-medium">
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-sky-accent"></span>
+                2-4 unit small multifamily acquisitions &amp; value-add execution
+              </li>
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-sky-accent"></span>
+                Lease yield projections &amp; historical rent-growth trendlines
+              </li>
+<li class="flex items-center gap-2.5">
+<span class="w-2 h-2 rounded-full bg-sky-accent"></span>
+                Tax-advantaged 1031 exchange guidance &amp; local zoning sanity checks
+              </li>
+</ul>
+</div>
+<div class="pt-6 border-t border-white/10 flex flex-wrap gap-2">
+<span class="px-3 py-1 rounded-full bg-white/10 text-sky-accent text-xs font-medium">Cap Rate Modeling</span>
+<span class="px-3 py-1 rounded-full bg-white/10 text-sky-accent text-xs font-medium">Rent Roll Analysis</span>
+<span class="px-3 py-1 rounded-full bg-white/10 text-sky-accent text-xs font-medium">Exit Strategy</span>
+</div>
+</article>
+</div>
+</div>
+</section>
+<!-- END: ForBuyersAndInvestorsSection -->
+<!-- BEGIN: AboutNadiaSection -->
+<section class="py-24 bg-white" data-purpose="about-nadia" id="about">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="max-w-4xl mx-auto text-center mb-16">
+<span class="text-xs uppercase font-bold tracking-[0.2em] text-chicago-blue block mb-2">About Nadia</span>
+<h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-ink tracking-tight mb-6">
+          Analytical when it matters.<br/>
+<span class="italic font-normal">Human the whole way through.</span>
+</h2>
+<div class="w-12 h-0.5 bg-chicago-blue mx-auto mb-6"></div>
+<p class="text-slate-body text-base sm:text-lg leading-relaxed text-left sm:text-center">
+          Real estate transactions are significant financial inflection points, but they are also deeply personal transitions. Armed with an advanced Master's degree in Finance and years of boots-on-the-ground Chicago transaction tenure, Nadia Glavin pairs sharp financial diligence with proactive, concierge-level client care. Backed by the unmatched reach of Keller Williams ONEChicago, she ensures her clients move forward with total clarity and supreme leverage.
+        </p>
+</div>
+<!-- Neighborhood Expertise Chips Grid -->
+<div class="max-w-4xl mx-auto">
+<h4 class="text-xs uppercase font-bold tracking-[0.2em] text-center text-slate-body mb-6">
+          Core Neighborhood Specialties
+        </h4>
+<div class="flex flex-wrap justify-center gap-3">
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Lakeview</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Lincoln Park</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Old Town</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">West Loop</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Roscoe Village</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Ukrainian Village</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Wicker Park</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Logan Square</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Lincoln Square</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Andersonville</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">Gold Coast</span>
+<span class="px-5 py-2.5 rounded-full bg-ice-bg text-navy-ink text-sm font-medium hover:bg-chicago-blue hover:text-white transition-all cursor-default">South Loop</span>
+</div>
+</div>
+</div>
+</section>
+<!-- END: AboutNadiaSection -->
+<!-- BEGIN: BrunoSection -->
+<section class="py-24 bg-ice-bg border-y border-border-subtle" data-purpose="bruno-team-feature" id="bruno">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+<!-- Left Side: Bruno & Nadia Framed Feature -->
+<div class="lg:col-span-5 flex justify-center">
+<div class="relative w-full max-w-sm sm:max-w-md bg-white p-3 rounded-card shadow-xl border border-border-subtle">
+<div class="rounded-2xl overflow-hidden bg-[#FAF8F5] aspect-[4/5] relative">
+<img alt="Bruno the handsome red poodle with smart vest and architectural model" class="w-full h-full object-cover object-bottom" data-purpose="bruno-executive-portrait" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB5EvP3XavR2jw4y5QsrLQBFhv5w8QVPJGWBNfyGS4jZrF9z-asLrJ_J9yvqaxXhneCPpIFflUbYD4IlgzSCZ99bQZdVPm2tcH9RrUU5-PoAC9-bKaC-MyfUIAW8qXzFKpk-Yv11Q6CFQ7GYHrWThq8Aj5P6-URKSwVgqZy7jg3AEnm5vfbSc98PmNh4VbfOcEqswByBNcWwO0i1kINvl-6rlqqEd2Wh-YwZxhgqmyw2MPwzBhMsMps"/>
+</div>
+<div class="absolute -top-3 -right-3 bg-chicago-blue text-white text-xs font-bold px-3 py-1.5 rounded-full shadow-lg">
+              Official Mascot 🐾
+            </div>
+</div>
+</div>
+<!-- Right Side: Bruno Editorial Story -->
+<div class="lg:col-span-7 flex flex-col justify-center">
+<span class="text-xs uppercase font-bold tracking-[0.2em] text-chicago-blue block mb-2">Meet the Team</span>
+<h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-semibold text-navy-ink tracking-tight mb-4">
+            Bruno, Chief Barketing Officer.
+          </h2>
+<p class="text-slate-body text-base sm:text-lg leading-relaxed mb-6">
+            A quintessential Chicago companion, Bruno oversees client happiness, thorough sidewalk walkability surveys, neighborhood dog park adjacency, and uncompromising quality control over all open house treat tables.
+          </p>
+<!-- Pull-Quote Card -->
+<div class="bg-white p-6 rounded-2xl border border-border-subtle shadow-sm mb-6 max-w-lg">
+<p class="font-editorial italic text-xl text-chicago-blue mb-1">
+              “His opinions on pricing are not legally binding, but his vibes are 100% accurate.”
+            </p>
+<span class="text-xs font-semibold tracking-wider uppercase text-slate-body">— Keller Williams ONEChicago Office Rule #1</span>
+</div>
+<!-- Feature Note -->
+<div class="flex items-center gap-3">
+<span class="inline-flex items-center px-4 py-2 rounded-full bg-white border border-border-subtle text-xs font-medium text-navy-ink shadow-sm">
+<span class="mr-1.5">🐶</span> Coming Soon: Bruno Approved™ dog-friendly Chicago patios &amp; park guide
+            </span>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: BrunoSection -->
+<!-- BEGIN: ContactSection -->
+<section class="max-w-[1440px] mx-auto px-6 lg:px-12 my-12" data-purpose="contact-and-consultation" id="contact">
+<div class="bg-navy-ink rounded-[32px] text-white p-8 sm:p-12 lg:p-16 shadow-2xl relative overflow-hidden">
+<!-- Chicago Skyline Subtle Architectural Glow -->
+<div class="absolute -top-24 -left-24 w-96 h-96 bg-chicago-blue/30 rounded-full blur-3xl pointer-events-none"></div>
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+<!-- Left Side: Copy & Bruno Coffee Badge -->
+<div class="lg:col-span-6">
+<div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/10 text-sky-accent text-xs font-semibold uppercase tracking-wider mb-6">
+            Let's Talk Real Estate
+          </div>
+<h2 class="font-editorial text-3xl sm:text-4xl lg:text-5xl font-semibold text-white tracking-tight mb-6">
+            What are you planning next?
+          </h2>
+<p class="text-white/80 text-base sm:text-lg leading-relaxed mb-8 max-w-lg">
+            Whether you are 6 months out and gathering market intelligence, or ready to prepare your listing this coming week, consultations with Nadia are relaxed, transparent, and completely data-backed.
+          </p>
+<!-- Playful Coffee Badge -->
+<div class="inline-flex items-center gap-3 bg-white/5 border border-white/10 rounded-2xl p-4 max-w-md">
+<span class="text-2xl">☕🐾</span>
+<div class="text-xs">
+<p class="font-semibold text-white">Bruno approves all initial coffees</p>
+<p class="text-white/60">We can meet at your favorite neighborhood cafe, or hop on Zoom.</p>
+</div>
+</div>
+</div>
+<!-- Right Side: Contact Form Card with Success Preview -->
+<div class="lg:col-span-6 flex flex-col gap-6">
+<!-- Interactive Form Container -->
+<div class="bg-white text-navy-ink p-8 rounded-card shadow-2xl border border-white/20" data-purpose="lead-capture-form">
+<div class="mb-6">
+<h3 class="font-editorial text-2xl font-bold text-navy-ink">Request a Conversation</h3>
+<p class="text-xs text-slate-body">Direct, confidential response within 24 hours.</p>
+</div>
+<form action="#" class="space-y-4" method="POST" onsubmit="event.preventDefault(); document.getElementById('success-state-banner').classList.remove('hidden');">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-navy-ink mb-1" for="contact-name">Name *</label>
+<input class="w-full text-sm rounded-xl border-border-subtle focus:border-chicago-blue focus:ring focus:ring-sky-accent/40 bg-[#FAF8F5]/50" id="contact-name" name="name" placeholder="Anna Vance" required="" type="text"/>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-navy-ink mb-1" for="contact-email">Email *</label>
+<input class="w-full text-sm rounded-xl border-border-subtle focus:border-chicago-blue focus:ring focus:ring-sky-accent/40 bg-[#FAF8F5]/50" id="contact-email" name="email" placeholder="anna@example.com" required="" type="email"/>
+</div>
+</div>
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-navy-ink mb-1" for="contact-phone">Phone</label>
+<input class="w-full text-sm rounded-xl border-border-subtle focus:border-chicago-blue focus:ring focus:ring-sky-accent/40 bg-[#FAF8F5]/50" id="contact-phone" name="phone" placeholder="(312) 000-0000" type="tel"/>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-navy-ink mb-1" for="contact-interest">I'm looking to… *</label>
+<select class="w-full text-sm rounded-xl border-border-subtle focus:border-chicago-blue focus:ring focus:ring-sky-accent/40 bg-[#FAF8F5]/50" id="contact-interest" name="interest" required="">
+<option value="sell">Sell a property</option>
+<option value="buy">Buy a home</option>
+<option value="invest">Invest in Chicago</option>
+<option value="discuss">Talk through my options</option>
+</select>
+</div>
+</div>
+<div>
+<label class="block text-xs font-bold uppercase tracking-wider text-navy-ink mb-1" for="contact-notes">Anything else?</label>
+<textarea class="w-full text-sm rounded-xl border-border-subtle focus:border-chicago-blue focus:ring focus:ring-sky-accent/40 bg-[#FAF8F5]/50" id="contact-notes" name="notes" placeholder="Tell us about the property, timeline, or preferred neighborhoods..." rows="3"></textarea>
+</div>
+<button class="w-full py-3.5 rounded-full bg-chicago-blue hover:bg-blue-800 text-white font-medium text-sm tracking-wide shadow-md hover:shadow-lg transition-all active:scale-[0.99]" type="submit">
+                Start the conversation
+              </button>
+<p class="text-[11px] text-center text-slate-body mt-2">
+                By submitting, you agree to the Privacy Policy. No spam, ever.
+              </p>
+</form>
+</div>
+<!-- Form Success State Card Preview -->
+<div class="bg-[#F0FDF4] border border-green-200 text-green-900 rounded-2xl p-5 flex items-start gap-3.5 shadow-md transition-all" data-purpose="form-success-state-preview" id="success-state-banner">
+<div class="w-8 h-8 rounded-full bg-green-500 text-white flex items-center justify-center shrink-0 font-bold text-sm">
+              ✓
+            </div>
+<div>
+<h4 class="font-bold text-sm text-green-950">Thank you, Anna. I'll be in touch shortly.</h4>
+<p class="text-xs text-green-800 mt-0.5">Nadia &amp; Bruno will review your details today and send over initial insights.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- END: ContactSection -->
+<!-- BEGIN: MainFooter -->
+<footer class="bg-navy-ink text-white/80 py-12 border-t border-white/10" data-purpose="page-footer">
+<div class="max-w-[1440px] mx-auto px-6 lg:px-12">
+<div class="flex flex-col md:flex-row items-center justify-between gap-6 pb-8 border-b border-white/10">
+<div>
+<span class="font-editorial text-xl font-bold text-white tracking-tight">Nadia Glavin, REALTOR®</span>
+<p class="text-xs text-white/60 mt-0.5">Keller Williams ONEChicago · Chicago, Illinois</p>
+</div>
+<!-- Disclaimers & Fair Housing -->
+<div class="flex items-center gap-6 text-xs text-white/60">
+<div class="flex items-center gap-2">
+<!-- Equal Housing Opportunity Icon Placeholder -->
+<svg class="w-5 h-5 text-white/80" fill="currentColor" viewbox="0 0 24 24">
+<path d="M12 3L2 12h3v8h6v-6h2v6h6v-8h3L12 3zm0 4.5l4 3.6V18h-2v-4h-4v4H8v-6.9l4-3.6z"></path>
+</svg>
+<span>Equal Housing Opportunity</span>
+</div>
+<span>·</span>
+<span>REALTOR® MLS Member</span>
+</div>
+</div>
+<!-- Legal Footnote -->
+<div class="pt-6 flex flex-col md:flex-row items-center justify-between text-[11px] text-white/40 gap-4">
+<p>
+          Each Keller Williams office is independently owned and operated. Information deemed reliable but not guaranteed. Equal Housing Opportunity.
+        </p>
+<div class="flex gap-4">
+<a class="hover:underline" href="#">Privacy Policy</a>
+<a class="hover:underline" href="#">Terms of Service</a>
+<a class="hover:underline" href="#">Licensing Information</a>
+</div>
+</div>
+</div>
+</footer>
+<!-- END: MainFooter -->
+<!-- BEGIN: AIChatWidget -->
+<aside class="relative" data-purpose="ai-chat-assistant-widget">
+<!-- Opened Chat Mockup Panel (Positioned Fixed) -->
+<div aria-label="Nadia Assistant Chat Window" class="fixed bottom-24 right-6 w-[360px] sm:w-[380px] h-[520px] bg-white rounded-[20px] shadow-2xl border border-border-subtle flex flex-col z-50 overflow-hidden transition-all duration-300" id="chat-mockup-panel">
+<!-- Chat Header -->
+<div class="bg-chicago-blue text-white p-4 flex items-center justify-between shadow-sm">
+<div class="flex items-center gap-3">
+<div class="relative">
+<div class="w-10 h-10 rounded-full overflow-hidden border-2 border-white bg-white">
+<!-- Bruno Circular Thumbnail Avatar -->
+<img alt="Bruno Avatar" class="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuClqtKZN9_-Wz6l4pAEt5UefkYnnOYy3alpw-xfLX_Ep1LhObjNRMotJqBcnoVN6Gdlk0o2htZKhAQYm2qLp9HnOGOa3LJFjjPnaXhNtbT_irsa7BED57vcSCW_JjD6RI2C74TFaC-Z9u7ez9lWXjrcw9GonBk2hlgUTX4z-B4gJ-B150GAEKsz1yrw1eDIqpGLAVlxmJkE7_pMpga-xoLjTihdAuNbyYLiW-Dl5NM3z8U4j1oNARdo"/>
+</div>
+<!-- Online Indicator -->
+<span class="absolute bottom-0 right-0 w-3 h-3 rounded-full bg-green-400 border-2 border-chicago-blue"></span>
+</div>
+<div>
+<h4 class="text-sm font-bold tracking-tight text-white leading-tight">Nadia's Assistant</h4>
+<p class="text-[11px] text-sky-accent font-medium">Online · Ready to help</p>
+</div>
+</div>
+<button aria-label="Close chat window" class="text-white/80 hover:text-white transition-colors p-1" onclick="document.getElementById('chat-mockup-panel').classList.toggle('hidden')" type="button">
+<svg class="w-5 h-5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</div>
+<!-- Chat Body -->
+<div class="flex-1 p-4 overflow-y-auto space-y-3.5 bg-[#FAF8F5]/60 text-xs">
+<!-- Assistant Greeting -->
+<div class="flex items-start gap-2">
+<div class="w-7 h-7 rounded-full overflow-hidden bg-white shrink-0 border border-border-subtle">
+<img alt="Bruno thumbnail" class="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuD1PyahirvBDtyC934yrn4tsTBddkML3lFxgwo4Ht4Oy3jdpBvTG3CydAoot1lLWhDC1U0GgOgL6leKzTAgYNtIc2DEJay3zpNsTz1gNlcz9y9OdM0yxrv-TCeMtN0ZRKkPBuQ3d9hhXF7dfghNWxnUYqM4d46jwY-82TAKI_POSZMlXBfW1UzFRHzI7uKJuvz7YzJCcq5Ided5chg08hhwc1NcGVGp6yhMmoJP_PPlCcy9doGA5gdC"/>
+</div>
+<div class="bg-white text-navy-ink rounded-2xl rounded-tl-none p-3 shadow-sm border border-border-subtle max-w-[85%] leading-relaxed">
+            Hi! I'm Nadia's assistant. Are you thinking about buying, selling, or investing in Chicago? 🐾
+          </div>
+</div>
+<!-- User Message -->
+<div class="flex justify-end">
+<div class="bg-chicago-blue text-white rounded-2xl rounded-tr-none p-3 shadow-sm max-w-[80%] leading-relaxed">
+            We're looking to sell our 2-flat in Lincoln Park this summer.
+          </div>
+</div>
+<!-- Assistant Follow-up -->
+<div class="flex items-start gap-2">
+<div class="w-7 h-7 rounded-full overflow-hidden bg-white shrink-0 border border-border-subtle">
+<img alt="Bruno thumbnail" class="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVz-0nDYETo806sFZcZc966ZzfNfSkV1Y-ijEiLTRDLB2kpw9vN5CT_18xWjAwwtaDpUuL-IzB4VZufJfGdSDtlj3P42Qi0abRK13Cmzv7hfSHApE5v946NMlk3HTTYCLUlZH79COwfKI-QhvMqZfSXNDRDoAmkZd8SpfbtOf7mDPi_fX3IihVBN8zHM2snOd10V8V3PJdQJW2mRw28JDAPmHxXaJnFeXKbpZu-V6W1Xxyq3K4ez1P"/>
+</div>
+<div class="bg-white text-navy-ink rounded-2xl rounded-tl-none p-3 shadow-sm border border-border-subtle max-w-[85%] leading-relaxed">
+            Lincoln Park multi-units are seeing strong buyer interest! Nadia specializes in investment positioning and can prepare a tailored valuation. Would you like to schedule a quick 15-min call?
+          </div>
+</div>
+<!-- Typing Indicator -->
+<div class="flex items-center gap-2 pl-9 text-[11px] text-slate-body">
+<div class="flex items-center space-x-1 bg-white px-2.5 py-1.5 rounded-full border border-border-subtle">
+<span class="w-1.5 h-1.5 bg-chicago-blue rounded-full typing-dot"></span>
+<span class="w-1.5 h-1.5 bg-chicago-blue rounded-full typing-dot"></span>
+<span class="w-1.5 h-1.5 bg-chicago-blue rounded-full typing-dot"></span>
+</div>
+<span class="text-[10px] text-slate-body italic">Bruno is reviewing...</span>
+</div>
+</div>
+<!-- Chat Footer Input -->
+<div class="p-3 bg-white border-t border-border-subtle flex flex-col gap-1.5">
+<form action="#" class="flex items-center gap-2" onsubmit="event.preventDefault();">
+<input class="flex-1 text-xs py-2 px-3 rounded-full border border-border-subtle bg-gray-50 focus:bg-white focus:outline-none focus:ring-1 focus:ring-chicago-blue" placeholder="Ask about listings, pricing, or Bruno..." type="text"/>
+<button aria-label="Send message" class="w-8 h-8 rounded-full bg-chicago-blue hover:bg-blue-800 text-white flex items-center justify-center shrink-0 transition-colors shadow-sm" type="submit">
+<svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" viewbox="0 0 24 24"><path d="M14 5l7 7m0 0l-7 7m7-7H3" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path></svg>
+</button>
+</form>
+<p class="text-[9px] text-center text-slate-body/80">
+          Powered by Keller Williams ONEChicago · Privacy guaranteed
+        </p>
+</div>
+</div>
+<!-- Floating Toggle Button (Bottom-Right) -->
+<button aria-label="Toggle live assistance chat" class="fixed bottom-6 right-6 z-50 w-14 h-14 bg-chicago-blue hover:bg-blue-800 rounded-full shadow-2xl flex items-center justify-center text-white transition-all transform hover:scale-105 active:scale-95" data-purpose="chat-toggle-floating-button" onclick="document.getElementById('chat-mockup-panel').classList.toggle('hidden')" type="button">
+<!-- Chat Bubble Icon -->
+<svg class="w-6 h-6" fill="none" stroke="currentColor" viewbox="0 0 24 24">
+<path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z" stroke-linecap="round" stroke-linejoin="round" stroke-width="2"></path>
+</svg>
+<!-- Mini Bruno Pin Badge -->
+<span class="absolute -top-1 -right-1 w-6 h-6 rounded-full border-2 border-white overflow-hidden bg-white shadow">
+<img alt="Bruno thumbnail" class="w-full h-full object-cover object-bottom" src="https://lh3.googleusercontent.com/aida-public/AB6AXuC3Wp6fd-4wQ7qEhBru33KrnMilp7q637MLR0Gx-ckyxXt1UGrMTN0Zz_9GE7nj9-hmN_k9yEcFL34jIP0JrviqV-YyytcRSlDwl_S9rVMtcZhqj0q96ud5cPjetsfX8T-ORE8d38fs1fkf1QSST6Z28v3_Gdp4nulea9s15LyhUfQ-TGKCUJ4e0ZeZHjpFbSTm50ml1BHyCXlOLVZ1LwSD1TAoeaT45VzLrLBD-qwfGMcfyyhcPB-C"/>
+</span>
+</button>
+</aside>
+<!-- END: AIChatWidget -->
+<!-- Interactive JavaScript Helper -->
+<script data-purpose="event-handlers">
+    document.addEventListener('DOMContentLoaded', () => {
+      // Smooth close/open state toggle helper for responsive handling
+      const chatPanel = document.getElementById('chat-mockup-panel');
+      if (window.innerWidth < 640 && chatPanel) {
+        // Keep available but minimized on tiny mobile screens if needed
+      }
+    });
+  </script>
+</body></html>
